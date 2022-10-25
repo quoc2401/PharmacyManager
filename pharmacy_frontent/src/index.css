@@ -11,3 +11,26 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.p-inputnumber-button {
+  width: 28px !important;
+}
+
+.p-inputnumber-button span {
+  font-size: 12px;
+}
+
+.line-clamp-1,
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.line-clamp-1 {
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  -webkit-line-clamp: 2;
+}

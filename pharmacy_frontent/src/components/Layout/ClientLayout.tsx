@@ -1,11 +1,17 @@
-import React, { FC } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import React, { FC, useEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import { homeRoute } from '../../routes'
 import PageNotFound from '../../views/PageNotFound'
 import Footer from './Footer'
 import Header from './Header'
 
 const ClientLayout: FC = () => {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname, location.search])
+
   return (
     <div>
       <Header />
