@@ -212,4 +212,9 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'log' => 'daily',
+
+    'log_max_files' => 30,
+
+    'log_level' => env('APP_LOG_LEVEL', 'error'),
 ];

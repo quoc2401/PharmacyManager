@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    protected $user;
+    protected $userService;
 
-    public function __construct(User $user)
+    public function __construct(UserService $userService)
     {
-        $this->user = $user;
+        $this->userService = $userService;
     }
 
 
@@ -26,16 +26,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $username = $request->get('username');
+        $users = $this->userService->get($request);
 
-        $users = $this->user->where('username', 'LIKE', '%'.$username.'%')->paginate(env('PAGE_SIZE'));
-
-        $userResources = UserResource::collection($users)->response()->getData(true);
-
-        return response()->json([
-            'data' => $userResources,
-            'request' => $username
-        ], Response::HTTP_OK);
+        return $this->SuccessRespone($users);
     }
 
     /**
@@ -46,11 +39,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $response = $request->all();
+        $user = $this->userService->create($request);
 
-        return response()->json([
-            'data' => $response
-        ], 200);
+        return $this->SuccessRespone($user);
     }
 
     /**
@@ -61,11 +52,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->user->findOrFail($id);
+        $user = $this->userService->find($id);
 
-        return response()->json([
-            'data' => $user
-        ], 200);
+        return $this->SuccessRespone($user);
     }
 
     /**
@@ -75,9 +64,11 @@ class UserController extends Controller
      * @param  \App\Models\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update($id, StoreUserRequest $request)
     {
-        //
+        $user = $this->userService->update($id, $request);
+
+        return $this->SuccessRespone($user);
     }
 
     /**
@@ -86,8 +77,10 @@ class UserController extends Controller
      * @param  \App\Models\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        $this->userService->delete($id);
+
+        return $this->SuccessRespone("", "delete success", 200);
     }
 }
