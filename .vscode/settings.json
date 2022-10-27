@@ -5,5 +5,8 @@
     "primereact",
     "tailwindcss",
     "zustand"
+  ],
+  "eslint.rules.customizations": [
+    { "rule": "*", "severity": "warn" },
   ]
 }
