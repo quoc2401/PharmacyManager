@@ -6,7 +6,7 @@ const PageNotFound: FC = () => {
 
   return (
     <div
-      className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-slate-200 z-[-1]"
+      className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-slate-200 z-[1000]"
       style={{
         backgroundImage:
           'url(https://demos.creative-tim.com/vue-argon-design-system-pro/img/ill/404.svg)',

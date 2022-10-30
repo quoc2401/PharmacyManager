@@ -3,9 +3,15 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      width: {
+        '73/100': '73%'
+      },
+      height: {
+        'side-bar': 'calc(100vh - 7.5rem)'
+      },
       colors: {
         overlay: 'rgba(0,0,0,0.4)',
-        'primary-50': '#DDE6D5',
+        'primary-50': 'rgba(183, 224, 184, 0.3)',
         'primary-100': '#638A66',
         'primary-200': '#A3B899',
         'primary-300': '#667B68',

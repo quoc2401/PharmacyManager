@@ -17,8 +17,8 @@ class UserRepository implements IRepository{
         
         $users = $this->users->where(function($query) use($param) {
                 foreach($param as $key=>$value) {
-
-                    $query->orWhere($key, 'LIKE', '%'.$value.'%');
+                    if($key !== 'page')
+                        $query->orWhere($key, 'LIKE', '%'.$value.'%');
                 }
             })
             ->paginate(env('PAGE_SIZE'));

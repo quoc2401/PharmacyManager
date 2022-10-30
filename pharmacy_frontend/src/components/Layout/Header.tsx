@@ -9,10 +9,12 @@ import { toast } from 'react-toastify'
 import { useStore } from '../../store'
 
 interface HeaderProps {
-  openSideBar: (e: boolean) => void
+  setOpenedSideBar: (e: boolean) => void
+  openedSideBar: boolean
 }
 
-const Header: FC<HeaderProps> = ({ openSideBar }) => {
+const Header: FC<HeaderProps> = ({ setOpenedSideBar, openedSideBar }) => {
+  const currentUser = useStore(state => state.currentUser)
   const logout = useStore(state => state.logout)
   const [isOpenedOrder, setIsOpenedOrder] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -72,7 +74,7 @@ const Header: FC<HeaderProps> = ({ openSideBar }) => {
 
   return (
     <>
-      <div className="fixed justify-between lg:justify-start top-0 left-0 w-full h-[5rem] bg-white shadow-1 flex items-center px-6 text-slate-600 z-[10]">
+      <div className="fixed justify-between lg:justify-start top-0 left-0 w-full h-[5rem] bg-white shadow-md flex items-center px-6 text-slate-600 z-[10]">
         <Link
           className="flex items-center font-medium text-xl order-2 lg:order-1 lg:w-[19rem]"
           to="/"
@@ -87,13 +89,15 @@ const Header: FC<HeaderProps> = ({ openSideBar }) => {
 
         <button
           className="p-link header-button order-1 lg:order-2 lg:ml-3"
-          onClick={() => openSideBar(true)}
+          onClick={() => setOpenedSideBar(!openedSideBar)}
         >
           <i className="pi pi-bars text-xl"></i>
         </button>
 
-        <div className="hidden lg:flex order-3 ml-auto space-x-3">
-          <Cart isOpened={isOpenedOrder} setIsOpened={setIsOpenedOrder} />
+        <div className="flex order-3 lg:ml-auto space-x-3">
+          {currentUser?.user_role === 'EMPLOYEE' && (
+            <Cart isOpened={isOpenedOrder} setIsOpened={setIsOpenedOrder} />
+          )}
 
           <Tippy content="Menu" arrow={false}>
             <button
@@ -106,25 +110,6 @@ const Header: FC<HeaderProps> = ({ openSideBar }) => {
             </button>
           </Tippy>
           <Menu ref={menu} model={menuItems} popup id="menu" />
-        </div>
-
-        <div className="order-3 flex lg:hidden">
-          <Tippy content="Menu" arrow={false}>
-            <button
-              aria-controls="menu-mobile"
-              aria-haspopup
-              className="p-link header-button"
-              onClick={e => menuMobile.current?.toggle(e)}
-            >
-              <i className="pi pi-ellipsis-v text-xl"></i>
-            </button>
-          </Tippy>
-          <Menu
-            ref={menuMobile}
-            model={menuMobileItems}
-            popup
-            id="menu-mobile"
-          />
         </div>
       </div>
       {loading && (

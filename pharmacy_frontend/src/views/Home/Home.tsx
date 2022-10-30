@@ -4,7 +4,11 @@ import { useTitle } from '../../hooks/useTitle'
 const Home: FC = () => {
   useTitle('Pharmacy - Home')
 
-  return <div>Home</div>
+  return (
+    <div className="card">
+
+    </div>
+  )
 }
 
 export default Home

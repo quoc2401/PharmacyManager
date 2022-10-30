@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         $users = $this->userService->get($request);
 
-        return $this->SuccessRespone($users);
+        return $this->SuccessResponse($users);
     }
 
     /**
@@ -41,7 +41,7 @@ class UserController extends Controller
     {
         $user = $this->userService->create($request);
 
-        return $this->SuccessRespone($user);
+        return $this->SuccessResponse($user);
     }
 
     /**
@@ -54,7 +54,7 @@ class UserController extends Controller
     {
         $user = $this->userService->find($id);
 
-        return $this->SuccessRespone($user);
+        return $this->SuccessResponse($user);
     }
 
     /**
@@ -68,7 +68,7 @@ class UserController extends Controller
     {
         $user = $this->userService->update($id, $request);
 
-        return $this->SuccessRespone($user);
+        return $this->SuccessResponse($user);
     }
 
     /**
@@ -81,6 +81,6 @@ class UserController extends Controller
     {
         $this->userService->delete($id);
 
-        return $this->SuccessRespone("", "delete success", 200);
+        return $this->SuccessResponse("", "delete success", 200);
     }
 }
