@@ -4,6 +4,7 @@ import { useStore } from '../../store'
 import { adminRoute } from '../../routes'
 import PageNotFound from '../../views/PageNotFound'
 import Header from './Header'
+import AdminNav from '../../views/Admin/AdminNav'
 
 const AdminLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
@@ -17,17 +18,21 @@ const AdminLayout: FC = () => {
     return <Navigate to={`/`} replace />
 
   return (
-    <div>
+    <>
       <Header />
-
-      <Routes>
-        {adminRoute.map(route => {
-          const Page = route.component
-          return <Route key={route.path} path={route.path} element={<Page />} />
-        })}
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </div>
+      <div className='fixed left w-1/5 min-h-full'>
+        <AdminNav />
+      </div>
+      <div className='w-73/100 float-right p-10 relative top-28 bg-white rounded-md mr-8'>
+        <Routes>
+          {adminRoute.map(route => {
+            const Page = route.component
+            return <Route key={route.path} path={route.path} element={<Page />} />
+          })}
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </div>
+    </>
   )
 }
 

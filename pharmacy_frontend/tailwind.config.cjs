@@ -3,6 +3,9 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      width: {
+        '73/100' : '73%'
+      },
       colors: {
         overlay: 'rgba(0,0,0,0.4)',
         'primary-50': '#DDE6D5',
