@@ -1,7 +1,7 @@
-import Home from "../views/Home/Home";
-import Detail from "../views/Home/Detail";
-import Dashboard from "../views/Admin/Dashboard";
-import Manage from "../views/Admin/Manage";
+import Home from '../views/Home/Home'
+import Detail from '../views/Home/Detail'
+import Dashboard from '../views/Admin/Dashboard'
+import Manage from '../views/Admin/Manage'
 
 export const homeRoute = [
   {
@@ -9,7 +9,15 @@ export const homeRoute = [
     component: Home
   },
   {
-    path: '/details/:id',
+    path: '/medicine/:name/:id',
+    component: Detail
+  },
+  {
+    path: '/order-cart',
+    component: Detail
+  },
+  {
+    path: '/order-details/:id',
     component: Detail
   }
 ]

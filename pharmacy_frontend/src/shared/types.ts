@@ -1,10 +1,11 @@
 export interface User {
-  uid: string;
-  email: string | null;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  photoURL: string;
-  phoneNumber: string | null;
-  role: string;
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+  birth_date: string | null
+  phone: string | null
+  user_role: string
+  created_at: string
+  updated_at: string | null
 }

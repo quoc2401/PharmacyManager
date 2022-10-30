@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react'
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
+import React, { FC } from 'react'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import { useStore } from '../../store'
 import { adminRoute } from '../../routes'
 import PageNotFound from '../../views/PageNotFound'
@@ -7,13 +7,8 @@ import Header from './Header'
 
 const AdminLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
-  const location = useLocation()
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location.pathname, location.search])
-
-  if (currentUser && currentUser?.role === 'EMPLOYEE')
+  if (currentUser && currentUser?.user_role === 'EMPLOYEE')
     return <Navigate to={`/`} replace />
 
   return (

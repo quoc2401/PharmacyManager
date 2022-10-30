@@ -1,25 +1,29 @@
-import React, { FC, useEffect } from 'react'
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
+import React, { FC, useState } from 'react'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import { useStore } from '../../store'
 import { homeRoute } from '../../routes'
 import PageNotFound from '../../views/PageNotFound'
 import Footer from './Footer'
 import Header from './Header'
+import { Sidebar } from 'primereact/sidebar'
 
 const ClientLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
-  const location = useLocation()
+  const [isOpenedSideBar, setIsOpenedSideBar] = useState(false)
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location.pathname, location.search])
-
-  if (currentUser && currentUser?.role === 'ADMIN')
+  if (currentUser && currentUser?.user_role === 'ADMIN')
     return <Navigate to={`/admin`} replace />
 
   return (
     <div>
-      <Header />
+      <Header openSideBar={setIsOpenedSideBar} />
+
+      <Sidebar
+        visible={isOpenedSideBar}
+        onHide={() => setIsOpenedSideBar(false)}
+      >
+        <h3>Sidebar</h3>
+      </Sidebar>
 
       <Routes>
         {homeRoute.map(route => {
