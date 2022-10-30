@@ -1,9 +1,14 @@
 {
   "cSpell.words": [
     "formik",
+    "inputnumber",
+    "Laravel",
     "primeicons",
     "primereact",
     "tailwindcss",
+    "tippyjs",
+    "toastify",
+    "Tymon",
     "zustand"
   ],
   "eslint.rules.customizations": [
