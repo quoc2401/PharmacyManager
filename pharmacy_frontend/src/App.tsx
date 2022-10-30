@@ -6,6 +6,7 @@ import PrivateRoute from './components/PrivateRoute'
 import ClientLayout from './components/Layout/ClientLayout'
 import AdminLayout from './components/Layout/AdminLayout'
 
+
 const App: FC = () => {
   return (
     <Routes>
@@ -20,9 +21,9 @@ const App: FC = () => {
       <Route
         path="/admin/*"
         element={
-          <PrivateRoute>
+          // <PrivateRoute>
             <AdminLayout />
-          </PrivateRoute>
+          // </PrivateRoute>
         }
       />
       <Route path="/login" element={<Login />} />
