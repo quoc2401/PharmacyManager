@@ -27,6 +27,7 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::patch('/users/delete', [UserController::class, 'patchDelete']);
 
 //Auth api routes
 Route::group([

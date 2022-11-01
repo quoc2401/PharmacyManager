@@ -26,6 +26,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'user' => Auth::user()
         ], Response::HTTP_OK);
+
     }
 
     public function login(Request $request)
