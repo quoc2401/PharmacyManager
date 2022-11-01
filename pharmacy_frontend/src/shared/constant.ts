@@ -13,3 +13,7 @@ export const formatDate = (value: any) => {
 export const birthDateBodyTemplate = (rowData: any) => {
   return formatDate(rowData.birth_date)
 }
+
+export const convertParam = (param: string) => {
+  return param.replace(/\s+/g, '-')
+}

@@ -56,10 +56,9 @@ const AdminLayout: FC = () => {
       />
 
       <div
-        className={`flex flex-col min-h-screen justify-between transition-all transition-duration-200 ${
-          isOpenedSideBar ? 'ml-[300px]' : 'ml-0 !pl-[1.5rem]'
+        className={`flex flex-col min-h-screen justify-between transition-all transition-duration-200 pt-[6.2rem] md:pr-[1.5rem] md:pb-[1rem] md:pl-[3.2rem] ${
+          isOpenedSideBar ? 'lg:ml-[300px]' : 'ml-0 md:!pl-[1.5rem]'
         }`}
-        style={{ padding: '6.2rem 1.5rem 1rem 3.2rem' }}
       >
         <div style={{ flex: '1 1 auto' }}>
           <Routes>

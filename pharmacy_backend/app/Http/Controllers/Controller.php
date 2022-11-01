@@ -12,16 +12,16 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function SuccessResponse($data="", $msg= "success",  $status = Response::HTTP_OK) {
+    public function SuccessResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
+    {
         return response()->json([
             "data" => $data,
             "message" => $msg
         ], $status);
     }
 
-    public function PaginateResponse($data="", $msg= "success",  $status = Response::HTTP_OK) {
-        return response()->json([
-            $data
-        ], $status);
+    public function PaginateResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
+    {
+        return response()->json($data, $status);
     }
 }

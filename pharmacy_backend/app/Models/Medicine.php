@@ -14,10 +14,13 @@ class Medicine extends Model
     protected $fillable = [
         'name',
         'category_id',
-        'quantity_per_unit',
         'unit_price',
         'unit_in_stock',
-        'discontinued'
+        'discontinued',
+        'image',
+        'describe',
+        'uses',
+        'trademark'
     ];
 
     public function Category()
@@ -25,7 +28,8 @@ class Medicine extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function OrderDetails() {
+    public function OrderDetails()
+    {
         return $this->hasMany(OrderDetail::class);
     }
 }
