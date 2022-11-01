@@ -14,10 +14,10 @@ class UserRepository implements IRepository{
     }
 
     public function get($param) {
-        
+
         $users = $this->users->where(function($query) use($param) {
                 foreach($param as $key=>$value) {
-                    if($key !== 'page')
+                    if($key !== 'page' && !empty($value))
                         $query->orWhere($key, 'LIKE', '%'.$value.'%');
                 }
             })
@@ -49,11 +49,19 @@ class UserRepository implements IRepository{
     }
 
     public function delete($id) {
-        $user = $this->users->find($id);
-        if ($user == null)
-            return true;
-        $user->delete();
+        $this->users->destroy($id);
+        // if ($user == null)
+        //     return true;
+        // $user->delete();
         
+        return true;
+    }
+
+    public function patchDelte($users) {
+        foreach($users as $u) {
+            $this->users->destroy($u["id"]);
+        }
+
         return true;
     }
 }

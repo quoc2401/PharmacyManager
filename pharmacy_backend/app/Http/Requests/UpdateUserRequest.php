@@ -2,17 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Middleware\JWTAuthorization;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,11 +20,11 @@ class StoreUserRequest extends FormRequest
         return [
             'user' => 'required|array',
             'user.username' => 'required',
-            'user.password' => 'required',
-            'user.first_name' => 'required|regex:/^[\pL\s\-]+$/u',//alow letters,hyphens and spaces
+            'user.first_name' => 'required|regex:/^[\pL\s\-]+$/u', //alow letters,hyphens and spaces
             'user.last_name' => 'required|regex:/^[\pL\s\-]+$/u',
-            'user.phone' => 'required|numeric',
-            'user.birth_date' => 'required|date'
+            'user.phone' => 'required',
+            'user.birth_date' => 'required|date',
+            'user.user_role' => 'required'
         ];
     }
 
