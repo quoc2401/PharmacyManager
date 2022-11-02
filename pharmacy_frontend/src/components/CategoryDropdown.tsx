@@ -9,6 +9,12 @@ interface CategoryDropdownProps {
   setSelectedItem: (e: any) => void
 }
 
+const defaultCategory = {
+  id: 0,
+  name: 'Tất cả',
+  description: ''
+}
+
 const CategoryDropdown: FC<CategoryDropdownProps> = ({
   selectedItem,
   setSelectedItem
@@ -20,8 +26,8 @@ const CategoryDropdown: FC<CategoryDropdownProps> = ({
   const getData = async () => {
     setLoading(true)
     try {
-      const res = await getCategoriesApi(null, null)
-      setCategories(res.data.data)
+      const res = await getCategoriesApi(1, null)
+      setCategories([defaultCategory, ...res.data.data])
       setSize(res.data.meta.total)
       setLoading(false)
     } catch (e) {
@@ -34,7 +40,6 @@ const CategoryDropdown: FC<CategoryDropdownProps> = ({
   }, [])
 
   const onItemChange = (e: any) => {
-    console.log(selectedItem)
     setSelectedItem(e.value)
   }
 
@@ -43,7 +48,7 @@ const CategoryDropdown: FC<CategoryDropdownProps> = ({
       <Dropdown
         className="w-full"
         value={selectedItem}
-        onChange={prev => onItemChange(prev)}
+        onChange={e => onItemChange(e)}
         placeholder="Select Category"
         optionLabel="name"
         options={categories}

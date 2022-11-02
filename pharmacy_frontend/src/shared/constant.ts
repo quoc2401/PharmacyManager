@@ -22,3 +22,15 @@ export enum UserField {
   BIRTH_DATE = 'birth_date',
   USER_ROLE = 'user_role'
 }
+
+export enum MedicineField {
+  NAME = 'name',
+  CATEGORY = 'category_id',
+  UNIT_PRICE = 'unit_price',
+  UNIT_IN_STOCK = 'unit_in_stock',
+  DISCONTINUED = 'discontinued',
+  IMAGE = 'image',
+  DESCRIBE = 'describe',
+  USES = 'uses',
+  TRADEMARK = 'trademark'
+}

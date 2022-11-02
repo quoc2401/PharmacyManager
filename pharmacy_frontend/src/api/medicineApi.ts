@@ -8,6 +8,7 @@ export const getMedicinesApi = (page: number | null, params: any) => {
         )
         .join('&')
     : ''
+    
   return axiosClient.get(`/medicines?page=${page}&${queryParams}`)
 }
 
