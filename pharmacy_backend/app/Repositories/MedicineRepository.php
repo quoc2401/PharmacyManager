@@ -20,7 +20,7 @@ class MedicineRepository implements IRepository
       foreach ($param as $key => $value) {
         if ($key === 'category' && $value !== null)
           $query->orWhere('category_id', '=', $value);
-        else if ($key !== 'page')
+        else if ($key !== 'page' && !empty($value))
           $query->orWhere($key, 'LIKE', '%' . $value . '%');
       }
     })

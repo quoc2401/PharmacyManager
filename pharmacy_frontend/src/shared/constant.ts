@@ -1,6 +1,3 @@
-import { Button } from 'primereact/button'
-import { FC } from 'react'
-
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
   { name: 'Employee', code: 'EMPLOYEE' }
@@ -15,7 +12,7 @@ export const convertParam = (param: string) => {
 
 // const deleteDialogFooter: FC = (yesAction: Function, noAction: Function) => {
 //   return (
-    
+
 //   )
 // }
 

@@ -15,11 +15,17 @@ export interface Medicine {
   id: number
   name: string
   category_id: number | string
-  unit_price: string
+  unit_price: number
   unit_in_stock: number | 0
-  discontinued: number | string | 0
+  discontinued: number | 0
   image: string
   describe: string
   uses: string
   trademark: string
+}
+
+export interface Category {
+  id: number
+  name: string
+  description: string
 }

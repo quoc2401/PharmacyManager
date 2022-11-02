@@ -1,12 +1,14 @@
 import axiosClient from './axiosClient'
 
-interface Params {
-  page: number
-  category: number | null
-}
-
-export const getMedicinesApi = (_param: Params) => {
-  return axiosClient.get(`/medicines?page=${_param.page}`)
+export const getMedicinesApi = (page: number | null, params: any) => {
+  const queryParams = params
+    ? Object.keys(params)
+        .map(
+          k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k].value)
+        )
+        .join('&')
+    : ''
+  return axiosClient.get(`/medicines?page=${page}&${queryParams}`)
 }
 
 export const getMedicineByIdApi = (id: number) => {

@@ -6,6 +6,7 @@ import { Medicine } from '../shared/types'
 import { Link } from 'react-router-dom'
 import { convertParam } from '../shared/constant'
 import ImgFade from './ImgFade'
+import { formatCurrency } from '../shared/utils'
 
 interface MedicineItemProps {
   item: Medicine
@@ -14,9 +15,20 @@ interface MedicineItemProps {
 const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
   const [number, setNumber] = useState<number | null>(0)
 
+  const totalPrice = () => {
+    return Math.abs(
+      item.unit_price - item.unit_price * (item.discontinued / 100)
+    ).toFixed(2)
+  }
+
   return (
     <div className="flex flex-col bg-slate-100 rounded-md overflow-hidden border overflow-hidden shadow-md">
-      <div className="hover:brightness-90 transition-all transition-duration-200">
+      <div className="hover:brightness-90 transition-all transition-duration-200 relative">
+        {item.discontinued > 0 && (
+          <div className="absolute top-2 right-2 bg-red-500 rounded py-1 px-2 text-white text-sm">
+            -{Number(item.discontinued)}%
+          </div>
+        )}
         <Link to={`/medicine-details/${convertParam(item.name)}/${item.id}`}>
           <ImgFade className="w-full" lazy_src={item.image} />
         </Link>
@@ -34,6 +46,11 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
             <span className="ml-2 text-xs px-[6px] py-[2px] font-semibold rounded-md tracking-wide bg-[#ffcdd2] text-[#c63737]">
               OUTOFSTOCK
             </span>
+          )}
+        </div>
+        <div className="text-red-500 mt-2 font-medium text-lg">
+          {formatCurrency(
+            item.discontinued > 0 ? totalPrice() : item.unit_price
           )}
         </div>
         <div className="text-slate-500 mt-2 text-sm">

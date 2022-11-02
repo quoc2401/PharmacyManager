@@ -35,7 +35,6 @@ const items = [
   }
 ]
 
-
 const AdminLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
   const [isOpenedSideBar, setIsOpenedSideBar] = useState(false)
