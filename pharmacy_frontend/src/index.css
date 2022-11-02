@@ -40,6 +40,10 @@ body {
   font-size: 12px;
 }
 
+.p-dropdown-item {
+  height: 40px !important;
+}
+
 .card {
   background-color: var(--surface-card);
   padding: 1.5rem;

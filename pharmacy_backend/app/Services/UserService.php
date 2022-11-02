@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
-class UserService implements IService {
+class UserService implements IService
+{
 
     private $userRepository;
     private $auth;
@@ -17,7 +18,7 @@ class UserService implements IService {
     {
         $this->userRepository = $userRepository;
     }
-
+    
     public function get(Request $request) {
         //call repo
         $param = $request->all();
@@ -27,9 +28,10 @@ class UserService implements IService {
         return $userResources;
     }
 
-    public function find($id) {
+    public function find($id)
+    {
         $user = ["user" => $this->userRepository->find($id)];
-        
+
         return $user;
     }
 
@@ -60,9 +62,9 @@ class UserService implements IService {
         $this->userRepository->delete($id);
     }
 
-    public function patchDelete(Request $request) {
+    public function patchDelete(Request $request)
+    {
         $users = $request->all();
-        $this->userRepository->patchDelte($users);
+        $this->userRepository->patchDelete($users);
     }
 }
-?>

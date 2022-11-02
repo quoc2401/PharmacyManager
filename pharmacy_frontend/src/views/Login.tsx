@@ -47,7 +47,7 @@ const Login: FC = () => {
         }
         setLoading(false)
       } catch (error) {
-        toast.error(error.response.data.message, { theme: 'colored' })
+        toast.error(error.message, { theme: 'colored' })
         setLoading(false)
       }
     }

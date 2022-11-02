@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\MedicineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +41,15 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
+
+
+//Medicine api routes
+Route::get('/medicines', [MedicineController::class, 'index']);
+Route::get('/medicines/{id}', [MedicineController::class, 'show']);
+Route::post('/medicines', [MedicineController::class, 'store']);
+Route::put('/medicines/{id}', [MedicineController::class, 'update']);
+Route::delete('/medicines/{id}', [MedicineController::class, 'destroy']);
+
+
+//Category api routes
+Route::get('/categories', [CategoryController::class, 'index']);

@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
-class UserRepository implements IRepository{
+class UserRepository implements IRepository
+{
     private $users;
 
     public function __construct(User $users)
@@ -13,26 +13,28 @@ class UserRepository implements IRepository{
         $this->users = $users;
     }
 
-    public function get($param) {
-
-        $users = $this->users->where(function($query) use($param) {
-                foreach($param as $key=>$value) {
-                    if($key !== 'page' && !empty($value))
-                        $query->orWhere($key, 'LIKE', '%'.$value.'%');
-                }
-            })
+    public function get($param)
+    {
+        $users = $this->users->where(function ($query) use ($param) {
+            foreach ($param as $key => $value) {
+                if ($key !== 'page' && !empty($value))
+                    $query->orWhere($key, 'LIKE', '%' . $value . '%');
+            }
+        })
             ->paginate(env('PAGE_SIZE'));
-        
+
         return $users;
     }
 
-    public function find($id) {
+    public function find($id)
+    {
         $user = $this->users->find($id);
 
         return $user;
     }
 
-    public function create($data) {
+    public function create($data)
+    {
         $user = new User();
         $user->fill($data);
         $user->save();
@@ -40,7 +42,8 @@ class UserRepository implements IRepository{
         return $user;
     }
 
-    public function update($id, $data) {
+    public function update($id, $data)
+    {
         $user = $this->users->find($id);
         $user->update($data);
         $user->save();
@@ -48,12 +51,22 @@ class UserRepository implements IRepository{
         return $user;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $this->users->destroy($id);
         // if ($user == null)
         //     return true;
         // $user->delete();
-        
+
+        return true;
+    }
+
+    public function patchDelete($users)
+    {
+        foreach ($users as $u) {
+            $this->users->destroy($u["id"]);
+        }
+
         return true;
     }
 
@@ -65,4 +78,3 @@ class UserRepository implements IRepository{
         return true;
     }
 }
-?>
