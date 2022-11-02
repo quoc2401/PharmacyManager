@@ -18,9 +18,8 @@ class UserService implements IService
     {
         $this->userRepository = $userRepository;
     }
-
-    public function get(Request $request)
-    {
+    
+    public function get(Request $request) {
         //call repo
         $param = $request->all();
         $users = $this->userRepository->get($param);
@@ -36,8 +35,7 @@ class UserService implements IService
         return $user;
     }
 
-    public function create(Request $request)
-    {
+    public function create(Request $request) {
         //call repo
         $user = $request->get("user");
         $user["user_role"] = empty($user["user_role"]) ? "EMPLOYEE" : $user["user_role"];
@@ -48,8 +46,7 @@ class UserService implements IService
         return $response;
     }
 
-    public function update($id, Request $request)
-    {
+    public function update($id, Request $request) {
         //call repo
         $user = $request->get("user");
         $user["user_role"] = empty($user["user_role"]) ? "EMPLOYEE" : $user["user_role"];
@@ -60,8 +57,7 @@ class UserService implements IService
         return $response;
     }
 
-    public function delete($id)
-    {
+    public function delete($id) {
         //call repo
         $this->userRepository->delete($id);
     }

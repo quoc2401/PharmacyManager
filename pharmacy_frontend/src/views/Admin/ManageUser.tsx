@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, MouseEventHandler } from 'react'
 import { useTitle } from '../../hooks/useTitle'
-import { DataTable } from 'primereact/datatable'
+import { DataTable, DataTableProps } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import {
   getUsers,
