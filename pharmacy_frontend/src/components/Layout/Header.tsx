@@ -74,7 +74,7 @@ const Header: FC<HeaderProps> = ({ setOpenedSideBar, openedSideBar }) => {
 
   return (
     <>
-      <div className="fixed justify-between lg:justify-start top-0 left-0 w-full h-[5rem] bg-white shadow-md flex items-center px-6 text-slate-600 z-[10]">
+      <div className="fixed justify-between lg:justify-start top-0 left-0 w-full h-[5rem] bg-white shadow-md flex items-center px-6 text-slate-600 z-[1001]">
         <Link
           className="flex items-center font-medium text-xl order-2 lg:order-1 lg:w-[19rem]"
           to="/"

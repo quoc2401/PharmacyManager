@@ -47,7 +47,7 @@ const Login: FC = () => {
         }
         setLoading(false)
       } catch (error) {
-        toast.error(error.response.data.message, { theme: 'colored' })
+        toast.error(error.message, { theme: 'colored' })
         setLoading(false)
       }
     }
@@ -119,7 +119,7 @@ const Login: FC = () => {
               />
               <label
                 htmlFor="password"
-                className={formik.errors.username ? 'p-error' : ''}
+                className={formik.errors.password ? 'p-error' : ''}
                 style={{ left: '12px' }}
               >
                 Password*

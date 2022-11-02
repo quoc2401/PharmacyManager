@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
-class UserService implements IService {
+class UserService implements IService
+{
 
     private $userRepository;
     private $auth;
@@ -18,9 +19,8 @@ class UserService implements IService {
         $this->userRepository = $userRepository;
     }
 
-    public function get(Request $request) {
-        //auth
-
+    public function get(Request $request)
+    {
         //call repo
         $param = $request->all();
         $users = $this->userRepository->get($param);
@@ -29,43 +29,46 @@ class UserService implements IService {
         return $userResources;
     }
 
-    public function find($id) {
+    public function find($id)
+    {
         $user = ["user" => $this->userRepository->find($id)];
-        
+
         return $user;
     }
 
-    public function create(Request $request) {
-        //auth
-
+    public function create(Request $request)
+    {
         //call repo
         $user = $request->get("user");
         $user["user_role"] = empty($user["user_role"]) ? "EMPLOYEE" : $user["user_role"];
         $user["password"] = Hash::make($user["password"]);
 
-        $response = ["user" => $this->userRepository->create($user)];
+        $response = $this->userRepository->create($user);
 
         return $response;
     }
 
-    public function update($id, Request $request) {
-        //auth
-
+    public function update($id, Request $request)
+    {
         //call repo
         $user = $request->get("user");
         $user["user_role"] = empty($user["user_role"]) ? "EMPLOYEE" : $user["user_role"];
-        $user["password"] = Hash::make($user["password"]);
+        // $user["password"] = Hash::make($user["password"]);
 
-        $response = ["user" => $this->userRepository->update($id, $user)];
+        $response = $this->userRepository->update($id, $user);
 
         return $response;
     }
 
-    public function delete($id) {
-        //auth
-
+    public function delete($id)
+    {
         //call repo
         $this->userRepository->delete($id);
     }
+
+    public function patchDelete(Request $request)
+    {
+        $users = $request->all();
+        $this->userRepository->patchDelete($users);
+    }
 }
-?>

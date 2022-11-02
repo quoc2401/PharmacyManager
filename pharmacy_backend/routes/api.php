@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MedicineController;
 
 /*
@@ -28,6 +29,7 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::patch('/users/delete', [UserController::class, 'patchDelete']);
 
 //Auth api routes
 Route::group([
@@ -47,3 +49,7 @@ Route::get('/medicines/{id}', [MedicineController::class, 'show']);
 Route::post('/medicines', [MedicineController::class, 'store']);
 Route::put('/medicines/{id}', [MedicineController::class, 'update']);
 Route::delete('/medicines/{id}', [MedicineController::class, 'destroy']);
+
+
+//Category api routes
+Route::get('/categories', [CategoryController::class, 'index']);

@@ -7,37 +7,37 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 
+const items = [
+  {
+    icon: 'pi pi-chart-line',
+    name: 'Dashboard',
+    path: '/admin'
+  },
+  {
+    icon: 'pi pi-user',
+    name: 'Users',
+    path: '/admin/manage/users'
+  },
+  {
+    icon: 'pi pi-list',
+    name: 'Categories',
+    path: '/admin/manage/categories'
+  },
+  {
+    icon: 'pi pi-eraser',
+    name: 'Medicines',
+    path: '/admin/manage/medicines'
+  },
+  {
+    icon: 'pi pi-file-edit',
+    name: 'Orders',
+    path: '/admin/manage/orders'
+  }
+]
+
 const AdminLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
   const [isOpenedSideBar, setIsOpenedSideBar] = useState(false)
-
-  const items = [
-    {
-      icon: 'pi pi-chart-line',
-      name: 'Dashboard',
-      path: '/admin'
-    },
-    {
-      icon: 'pi pi-user',
-      name: 'Users',
-      path: '/admin/manage/users'
-    },
-    {
-      icon: 'pi pi-list',
-      name: 'Categories',
-      path: '/admin/manage/categories'
-    },
-    {
-      icon: 'pi pi-eraser',
-      name: 'Medicines',
-      path: '/admin/manage/medicines'
-    },
-    {
-      icon: 'pi pi-file-edit',
-      name: 'Orders',
-      path: '/admin/manage/orders'
-    }
-  ]
 
   if (currentUser && currentUser?.user_role === 'EMPLOYEE')
     return <Navigate to={`/`} replace />

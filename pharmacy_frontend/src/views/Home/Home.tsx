@@ -5,27 +5,30 @@ import { InputText } from 'primereact/inputtext'
 import { Paginator } from 'primereact/paginator'
 import { getMedicinesApi } from '../../api/medicineApi'
 import CategoryDropdown from '../../components/CategoryDropdown'
+import { FilterMatchMode } from 'primereact/api'
 
 const Home: FC = () => {
   const [medicines, setMedicines] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
+  const [totalRecords, setTotalRecords] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState('')
   const [lazyParams, setLazyParams] = useState({
     first: 0,
-    page: 1,
-    category: null
+    page: 0
   })
-  const [totalRecords, setTotalRecords] = useState(1)
+  const [filters, setFilters] = useState({
+    category: { value: '', matchMode: FilterMatchMode.EQUALS },
+    name: { value: '', matchMode: FilterMatchMode.CONTAINS },
+    uses: { value: '', matchMode: FilterMatchMode.CONTAINS }
+  })
   useTitle('Pharmacy - Home')
 
   useEffect(() => {
     setLoading(true)
     const getData = async () => {
       try {
-        const res = await getMedicinesApi({
-          page: lazyParams.page,
-          category: lazyParams.category
-        })
+        const res = await getMedicinesApi(lazyParams.page + 1, filters)
         setTotalRecords(res.data.meta.total)
         setMedicines(res.data.data)
         setLoading(false)
@@ -36,7 +39,7 @@ const Home: FC = () => {
     }
 
     getData()
-  }, [lazyParams])
+  }, [lazyParams, filters])
 
   const onCustomPageChange = (event: any) => {
     setLazyParams(event)
@@ -46,9 +49,12 @@ const Home: FC = () => {
 
   return (
     <div className="card">
-      <div className="mb-10 flex justify-between">
-        <CategoryDropdown />
-        <span className="p-input-icon-right ml-2">
+      <div className="mb-10 flex flex-col sm:flex-row justify-between">
+        <CategoryDropdown
+          setSelectedItem={setSelectedCategory}
+          selectedItem={selectedCategory}
+        />
+        <span className="p-input-icon-right mt-2 sm:mt-0 min-w-[300px] max-w-full">
           <i className="pi pi-search" />
           <InputText
             type="text"

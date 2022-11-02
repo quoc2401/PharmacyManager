@@ -12,7 +12,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function SuccessResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
+    public function UpdateSuccessResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
     {
         return response()->json([
             "data" => $data,
@@ -20,8 +20,11 @@ class Controller extends BaseController
         ], $status);
     }
 
-    public function PaginateResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
+    public function QuerySuccessResponse($data = "", $msg = "success",  $status = Response::HTTP_OK)
     {
-        return response()->json($data, $status);
+        return response()->json(
+            $data,
+            $status
+        );
     }
 }

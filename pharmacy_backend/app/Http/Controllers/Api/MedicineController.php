@@ -26,7 +26,7 @@ class MedicineController extends Controller
     {
         $medicines = $this->medicineService->get($request);
 
-        return $this->PaginateResponse($medicines);
+        return $this->QuerySuccessResponse($medicines);
     }
 
     /**
@@ -39,7 +39,7 @@ class MedicineController extends Controller
     {
         $medicine = $this->medicineService->create($request);
 
-        return $this->SuccessResponse($medicine);
+        return $this->UpdateSuccessResponse($medicine);
     }
 
     /**
@@ -52,7 +52,7 @@ class MedicineController extends Controller
     {
         $medicine = $this->medicineService->find($id);
 
-        return $this->SuccessResponse($medicine);
+        return $this->QuerySuccessResponse($medicine);
     }
 
     /**
@@ -66,7 +66,7 @@ class MedicineController extends Controller
     {
         $medicine = $this->medicineService->update($id, $request);
 
-        return $this->SuccessResponse($medicine);
+        return $this->UpdateSuccessResponse($medicine);
     }
 
     /**
@@ -79,6 +79,6 @@ class MedicineController extends Controller
     {
         $this->medicineService->delete($id);
 
-        return $this->SuccessResponse("", "delete success", 200);
+        return $this->UpdateSuccessResponse("", "delete success", 200);
     }
 }
