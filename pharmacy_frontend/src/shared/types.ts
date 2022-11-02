@@ -10,3 +10,16 @@ export interface User {
   created_at: string
   updated_at: string | null
 }
+
+export interface Medicine {
+  id: number
+  name: string
+  category_id: number | string
+  unit_price: string
+  unit_in_stock: number | 0
+  discontinued: number | string | 0
+  image: string
+  describe: string
+  uses: string
+  trademark: string
+}

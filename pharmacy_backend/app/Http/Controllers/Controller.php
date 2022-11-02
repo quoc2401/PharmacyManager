@@ -18,7 +18,7 @@ class Controller extends BaseController
             "message" => $msg
         ], $status);
     }
-
+    
     public function QuerySuccessResponse($data="", $msg= "success",  $status = Response::HTTP_OK) {
         return response()->json(
             $data

@@ -9,7 +9,7 @@ export const homeRoute = [
     component: Home
   },
   {
-    path: '/medicine/:name/:id',
+    path: '/medicine-details/:name/:id',
     component: Detail
   },
   {

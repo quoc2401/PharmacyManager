@@ -9,7 +9,9 @@ export const roles = [
 export const DEFAULT_AVATAR =
   'https://res.cloudinary.com/dynupxxry/image/upload/v1660532211/non-avatar_nw91c3.png'
 
-
+export const convertParam = (param: string) => {
+  return param.replace(/\s+/g, '-')
+}
 
 // const deleteDialogFooter: FC = (yesAction: Function, noAction: Function) => {
 //   return (
@@ -25,5 +27,4 @@ export enum UserField {
   PHONE = 'phone',
   BIRTH_DATE = 'birth_date',
   USER_ROLE = 'user_role'
-
-} 
+}
