@@ -38,7 +38,6 @@ const items = [
 const AdminLayout: FC = () => {
   const currentUser = useStore(state => state.currentUser)
   const [isOpenedSideBar, setIsOpenedSideBar] = useState(false)
-
   if (currentUser && currentUser?.user_role === 'EMPLOYEE')
     return <Navigate to={`/`} replace />
 

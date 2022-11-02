@@ -5,10 +5,6 @@ export const formatDate = (value: any) => {
   return date.toISOString().split('T')[0]
 }
 
-export const birthDateBodyTemplate = (rowData: any) => {
-  return formatDate(rowData.birth_date)
-}
-
 export const prependArray = (value: any, array: any[]) => {
   const newArray = array.slice()
   newArray.unshift(value)

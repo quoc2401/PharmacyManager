@@ -1,3 +1,6 @@
+import { Button } from 'primereact/button'
+import React from 'react'
+
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
   { name: 'Employee', code: 'EMPLOYEE' }
@@ -10,12 +13,6 @@ export const convertParam = (param: string) => {
   return param.replace(/\s+/g, '-')
 }
 
-// const deleteDialogFooter: FC = (yesAction: Function, noAction: Function) => {
-//   return (
-
-//   )
-// }
-
 export enum UserField {
   USERNAME = 'username',
   PASSWORD = 'password',
@@ -24,4 +21,16 @@ export enum UserField {
   PHONE = 'phone',
   BIRTH_DATE = 'birth_date',
   USER_ROLE = 'user_role'
+}
+
+export enum MedicineField {
+  NAME = 'name',
+  CATEGORY = 'category_id',
+  UNIT_PRICE = 'unit_price',
+  UNIT_IN_STOCK = 'unit_in_stock',
+  DISCONTINUED = 'discontinued',
+  IMAGE = 'image',
+  DESCRIBE = 'describe',
+  USES = 'uses',
+  TRADEMARK = 'trademark'
 }

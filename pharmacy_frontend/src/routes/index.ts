@@ -2,6 +2,7 @@ import Home from '../views/Home/Home'
 import Detail from '../views/Home/Detail'
 import Dashboard from '../views/Admin/Dashboard'
 import ManageUser from '../views/Admin/ManageUser'
+import ManageMedicine from '../views/Admin/ManageMedicine'
 
 export const homeRoute = [
   {
@@ -37,7 +38,7 @@ export const adminRoute = [
   },
   {
     path: '/manage/medicines',
-    component: ManageUser
+    component: ManageMedicine
   },
   {
     path: '/manage/orders',
