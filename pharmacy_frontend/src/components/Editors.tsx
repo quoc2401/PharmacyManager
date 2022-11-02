@@ -1,11 +1,7 @@
 import { Calendar } from 'primereact/calendar'
 import { InputText } from 'primereact/inputtext'
 import { Dropdown } from 'primereact/dropdown'
-
-const roles = [
-  { name: 'Admin', code: 'ADMIN' },
-  { name: 'Employee', code: 'EMPLOYEE' }
-]
+import { roles } from '../shared/constant'
 
 export const textEditor = (options: any) => {
   return (

@@ -23,14 +23,16 @@ const Sidebar: FC<SidebarProps> = ({
 }) => {
   return (
     <>
-      <div
+      {/* <div
         className={`lg:hidden fixed top-0 left-0 w-full h-full bg-overlay z-[20] transition-all transition-duration-200 ${
           openedSideBar ? 'block' : 'hidden'
         }`}
         onClick={() => setOpenedSideBar(false)}
-      ></div>
+      ></div> */}
       <div
-        className={`fixed shadow-md w-[300px] h-full lg:h-side-bar z-[21] top-0 lg:top-[6.2rem] left-0 lg:left-[1.5rem] bg-white transition-all transition-duration-200 lg:rounded-md py-[1.5rem] px-[1rem] ${
+        className={`fixed shadow-md w-[300px] h-full lg:h-side-bar z-[21] 
+        top-0 lg:top-[6.2rem] left-0 lg:left-[1.5rem] bg-white transition-all 
+        transition-duration-200 lg:rounded-md py-[1.5rem] px-[1rem] ${
           openedSideBar ? 'translate-x-0' : 'translate-x-[-100%] !left-0'
         }`}
       >

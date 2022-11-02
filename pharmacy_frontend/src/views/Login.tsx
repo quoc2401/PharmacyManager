@@ -119,7 +119,7 @@ const Login: FC = () => {
               />
               <label
                 htmlFor="password"
-                className={formik.errors.username ? 'p-error' : ''}
+                className={formik.errors.password ? 'p-error' : ''}
                 style={{ left: '12px' }}
               >
                 Password*

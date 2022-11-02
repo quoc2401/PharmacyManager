@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
+        $this->middleware('auth.role:ADMIN');
     }
 
 
@@ -28,7 +30,7 @@ class UserController extends Controller
     {
         $users = $this->userService->get($request);
 
-        return $this->SuccessResponse($users);
+        return $this->QuerySuccessResponse($users);
     }
 
     /**
@@ -41,7 +43,7 @@ class UserController extends Controller
     {
         $user = $this->userService->create($request);
 
-        return $this->SuccessResponse($user);
+        return $this->UpdateSuccessResponse($user);
     }
 
     /**
@@ -54,7 +56,7 @@ class UserController extends Controller
     {
         $user = $this->userService->find($id);
 
-        return $this->SuccessResponse($user);
+        return $this->QuerySuccessResponse($user);
     }
 
     /**
@@ -64,11 +66,11 @@ class UserController extends Controller
      * @param  \App\Models\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update($id, StoreUserRequest $request)
+    public function update($id, UpdateUserRequest $request)
     {
         $user = $this->userService->update($id, $request);
 
-        return $this->SuccessResponse($user);
+        return $this->UpdateSuccessResponse($user);
     }
 
     /**
@@ -81,6 +83,13 @@ class UserController extends Controller
     {
         $this->userService->delete($id);
 
-        return $this->SuccessResponse("", "delete success", 200);
+        return $this->UpdateSuccessResponse("", "delete success", 200);
+    }
+
+    //patch deleting
+    public function patchDelete(Request $request) {
+        $this->userService->patchDelete($request);
+
+        return $this->UpdateSuccessResponse("", "delete success");
     }
 }
