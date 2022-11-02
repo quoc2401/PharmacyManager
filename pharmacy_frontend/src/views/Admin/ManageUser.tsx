@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, MouseEventHandler } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTitle } from '../../hooks/useTitle'
-import { DataTable, DataTableProps } from 'primereact/datatable'
+import { DataTable} from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { getUsers, updateUser, createUser, deleteUser, deleteUsers } from '../../api/userApi'
 import { User } from '../../shared/types'
@@ -16,6 +16,7 @@ import { Button } from 'primereact/button'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
+import { deleteDialogFooter, newDialogFooter } from '../../components/DialogFooters'
 
 const emptyUser = {
   id:0,
@@ -229,23 +230,23 @@ const ManageUser: FC = () => {
     )
   }
 
-  const newDialogFooter = (yesAction: MouseEventHandler, noAction: MouseEventHandler) => {
-    return (
-      <>
-        <Button label="Create" icon="pi pi-plus" className="rounded-md mr-2" onClick={yesAction} />
-        <Button label="Cancel" icon="pi pi-times" className="p-button-danger rounded-md mr-2" onClick={noAction}/>
-      </>
-  )
-  }
+  // const newDialogFooter = (yesAction: MouseEventHandler, noAction: MouseEventHandler) => {
+  //   return (
+  //     <>
+  //       <Button label="Create" icon="pi pi-plus" className="rounded-md mr-2" onClick={yesAction} />
+  //       <Button label="Cancel" icon="pi pi-times" className="p-button-danger rounded-md mr-2" onClick={noAction}/>
+  //     </>
+  // )
+  // }
   
-  const deleteDialogFooter = (yesAction: MouseEventHandler, noAction: MouseEventHandler) => {
-    return (
-        <>
-          <Button label="Yes" icon="pi pi-check" className="rounded-md mr-2" onClick={yesAction} />
-          <Button label="No" icon="pi pi-times" className="p-button-danger rounded-md mr-2" onClick={noAction}/>
-        </>
-    )
-  } 
+  // const deleteDialogFooter = (yesAction: MouseEventHandler, noAction: MouseEventHandler) => {
+  //   return (
+  //       <>
+  //         <Button label="Yes" icon="pi pi-check" className="rounded-md mr-2" onClick={yesAction} />
+  //         <Button label="No" icon="pi pi-times" className="p-button-danger rounded-md mr-2" onClick={noAction}/>
+  //       </>
+  //   )
+  // } 
 
   const handleInput = (value:string, field:UserField) => {
     let _user = {...user}
@@ -414,10 +415,11 @@ const ManageUser: FC = () => {
       </Dialog>
 
       <Dialog visible={deleteDialog} style={{ width: '450px' }} header="Confirm" modal 
-              footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)} onHide={hideDeleteDialog}>
+              footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)} 
+              onHide={hideDeleteDialog}>
         <div className="confirmation-content">
             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-            {user && <span>Are you sure you want to delete the selected products?</span>}
+            {selectedUsers && <span>Are you sure you want to delete the selected users?</span>}
         </div>
       </Dialog>
     </div>

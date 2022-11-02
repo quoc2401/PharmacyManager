@@ -1,5 +1,6 @@
 import { Button } from 'primereact/button'
 import { FC } from 'react'
+import React from 'react'
 
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
@@ -8,14 +9,6 @@ export const roles = [
 
 export const DEFAULT_AVATAR =
   'https://res.cloudinary.com/dynupxxry/image/upload/v1660532211/non-avatar_nw91c3.png'
-
-
-
-// const deleteDialogFooter: FC = (yesAction: Function, noAction: Function) => {
-//   return (
-    
-//   )
-// }
 
 export enum UserField {
   USERNAME = 'username',
