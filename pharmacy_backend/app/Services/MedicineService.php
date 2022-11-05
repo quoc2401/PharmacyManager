@@ -6,6 +6,7 @@ use App\Http\Resources\MedicineResource;
 use App\Repositories\MedicineRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MedicineService implements IService
 {
@@ -39,24 +40,68 @@ class MedicineService implements IService
 
   public function create(Request $request)
   {
-    //auth
+    $data = $request->all();
+    
+    if($request->file('image_file')->isValid()) {
+        //get image and random name
+        $filename = $data['image_file']->getClientOriginalName();
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $name = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1,50))), 1, 50);
+        $filename = $name.".".$ext;
 
-    //call repo
-    $medicine = $request->get("medicine");
+        $data['image_file']->move("images/", $filename);
+        $data['image'] = "http://$_SERVER[HTTP_HOST]/"."images/".$filename;
+    }
+    
+    $response = $this->medicineRepository->create($data);
 
-    $response = ["medicine" => $this->medicineRepository->create($medicine)];
+    //delete if fail
+    if(!$response)
+      unlink(public_path()."\\images\\".$filename);
 
     return $response;
   }
 
   public function update($id, Request $request)
   {
-    //auth
+    $data = $request->all();
+    $medicine = $this->medicineRepository->find($id);
+    $tempUrl = $medicine->image;
+    $hasImage = false;
 
-    //call repo
-    $medicine = $request->get("medicine");
+    if($request->hasFile('image_file')) {
+      $hasImage = true;
+      if($request->file('image_file')->isValid()) {
+        //get image and random name
+          $filename = $data['image_file']->getClientOriginalName();
+          $ext = pathinfo($filename, PATHINFO_EXTENSION);
+          $name = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1,50))), 1, 50);
+          $filename = $name.".".$ext;
 
-    $response = ["medicine" => $this->medicineRepository->update($id, $medicine)];
+          $data['image_file']->move("images/", $filename);
+          $data['image'] = "http://$_SERVER[HTTP_HOST]/images/".$filename;
+      }
+    }
+
+    
+
+    $response = $this->medicineRepository->update($id, $data);
+
+    //delete if fail
+    if(!$response) {
+      unlink(public_path()."\\images\\".$filename);
+      $response = ["status" => 500, "message" => "fail to save to storage"]; 
+    }
+    //try delete old image
+    else {
+      try {
+        if($hasImage)
+          unlink(public_path().str_replace("http://$_SERVER[HTTP_HOST]", "",$tempUrl));
+      } catch (\Throwable $th) {
+        Log::error($th->getMessage());
+      }
+      
+    }
 
     return $response;
   }

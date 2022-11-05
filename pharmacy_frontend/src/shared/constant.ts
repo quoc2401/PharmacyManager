@@ -1,5 +1,6 @@
 import { Button } from 'primereact/button'
 import React from 'react'
+import { getCategoriesApi } from '../api/categoryApi';
 
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
@@ -32,5 +33,6 @@ export enum MedicineField {
   IMAGE = 'image',
   DESCRIBE = 'describe',
   USES = 'uses',
-  TRADEMARK = 'trademark'
+  TRADEMARK = 'trademark',
+  FILE = 'image_file'
 }

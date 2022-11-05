@@ -94,8 +94,7 @@ const ManageUser: FC = () => {
       const data = res.data.data
       setUsers(prev => {
         prev = prependArray(data, prev)
-
-        console.log(prev)
+        
         return prev
       })
       toast.success('Create success')

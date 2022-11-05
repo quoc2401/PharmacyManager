@@ -35,7 +35,7 @@ class MedicineRepository implements IRepository
       });
       
     })
-      ->paginate(env('PAGE_SIZE'));
+      ->paginate(env('ADMIN_MED_PAGE_SIZE'));
 
     return $medicines;
   }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\MedicineService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MedicineController extends Controller
 {
@@ -37,8 +38,9 @@ class MedicineController extends Controller
      */
     public function store(Request $request)
     {
-        $medicine = $this->medicineService->create($request);
+        Log::info("contentType: ".$request->getContentType());
 
+        $medicine = $this->medicineService->create($request);
         return $this->UpdateSuccessResponse($medicine);
     }
 
@@ -62,11 +64,11 @@ class MedicineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
-        $medicine = $this->medicineService->update($id, $request);
+        $res = $this->medicineService->update($id, $request);
 
-        return $this->UpdateSuccessResponse($medicine);
+        return $this->UpdateSuccessResponse($res);
     }
 
     /**
