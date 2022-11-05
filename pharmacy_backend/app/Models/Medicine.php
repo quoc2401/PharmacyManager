@@ -10,6 +10,7 @@ class Medicine extends Model
     use HasFactory;
 
     protected $table = 'medicines';
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
