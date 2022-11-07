@@ -3,6 +3,7 @@ import MedicineDetail from '../views/Home/MedicineDetail'
 import Dashboard from '../views/Admin/Dashboard'
 import ManageUser from '../views/Admin/ManageUser'
 import ManageMedicine from '../views/Admin/ManageMedicine'
+import ManageCategory from '../views/Admin/ManageCategory'
 
 export const homeRoute = [
   {
@@ -34,7 +35,7 @@ export const adminRoute = [
   },
   {
     path: '/manage/categories',
-    component: ManageUser
+    component: ManageCategory
   },
   {
     path: '/manage/medicines',

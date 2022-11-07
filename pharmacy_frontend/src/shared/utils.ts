@@ -20,3 +20,10 @@ export const formatCurrency = (value: any) => {
     })
   )
 }
+
+export const isBool = (value: any) => {
+  if (typeof(value) == "boolean")
+    return true
+  else
+    return false
+}

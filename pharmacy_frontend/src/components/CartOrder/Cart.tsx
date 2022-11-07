@@ -21,7 +21,7 @@ interface CartProps {
 
 const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
   const currentUser = useStore(state => state.currentUser)
-  const [cart, setCart] = useState<Array<OrderMedicine>>([])
+  const [cart, setCart] = useState<OrderMedicine[]>([])
 
   useEffect(() => {
     setCart(getCartLocal())
@@ -40,11 +40,14 @@ const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
   const handleCreateOrder = async () => {
     try {
       const res = await createOrderApi({
-        order_details: cart,
+        order_details: {...cart},
         user_id: currentUser?.id
       })
-
-      toast.success(res.data.message, { theme: 'colored' })
+      if(res.status === 200) {
+        
+        setCart([])
+        toast.success(res.data.message, { theme: 'colored' })
+      }
     } catch (error) {
       toast.error(error.message, { theme: 'colored' })
     }

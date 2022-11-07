@@ -83,4 +83,8 @@ class MedicineController extends Controller
 
         return $this->UpdateSuccessResponse("", "delete success", 200);
     }
+
+    public function patchDelete(Request $request) {
+        
+    }
 }

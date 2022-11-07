@@ -108,9 +108,11 @@ class MedicineService implements IService
 
   public function delete($id)
   {
-    //auth
-
-    //call repo
     $this->medicineRepository->delete($id);
+  }
+
+  public function patchDelete(Request $request)
+  {
+    $this->medicineRepository->patchDelete($request->all());
   }
 }

@@ -3,18 +3,23 @@
 namespace App\Services;
 
 use App\Http\Resources\OrderResource;
+use App\Repositories\OrderDetailRepository;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderService implements IService
 {
 
   private $orderRepository;
+  private $orderDetailRepository;
   private $auth;
 
-  public function __construct(OrderRepository $orderRepository)
+  public function __construct(OrderRepository $orderRepository, OrderDetailRepository $orderDetailRepository)
   {
     $this->orderRepository = $orderRepository;
+    $this->orderDetailRepository = $orderDetailRepository;
   }
 
   public function get(Request $request)
@@ -36,12 +41,30 @@ class OrderService implements IService
 
   public function create(Request $request)
   {
-    //call repo
-    $order = $request->get("order");
+    $data = $request->order_details;
+    DB::transaction(function() use ($request, $data){
+      $order = [
+          'user_id' => $request->user_id,
+          'order_date' => now(),
+      ];
 
-    $response = $this->orderRepository->create($order);
+      $order = $this->orderRepository->create($order);
 
-    return $response;
+      foreach ($data as $index=>$value) {
+        $medicine = $value['medicine'];
+        $orderDetail = [
+          'order_id' => $order['id'],
+          'medicine_id' =>$medicine['id'],
+          'unit_price' => $medicine['unit_price'],
+          'quantity' => $value['quantity'],
+          'discount' => 0,
+        ];
+        
+        $orderDetail = $this->orderDetailRepository->create($orderDetail);
+      }
+
+      return $order;
+    });
   }
 
   public function update($id, Request $request)
