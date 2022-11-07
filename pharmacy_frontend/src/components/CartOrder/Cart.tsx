@@ -1,6 +1,18 @@
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import Tippy from '@tippyjs/react'
+import cartEmpty from '../../assets/images/img_cart_empty.png'
 import ClickAwayListener from '../ClickAwayListener'
+import { getCartLocal } from '../../shared/localStorage'
+import CartItem from './CartItem'
+import { Medicine, OrderMedicine } from '../../shared/types'
+import { Button } from 'primereact/button'
+import { createOrderApi } from '../../api/orderApi'
+import { toast } from 'react-toastify'
+import {
+  removeCartStorage,
+  deleteMedicineLocal
+} from '../../shared/localStorage'
+import { useStore } from '../../store'
 
 interface CartProps {
   isOpened: boolean
@@ -8,10 +20,43 @@ interface CartProps {
 }
 
 const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
+  const currentUser = useStore(state => state.currentUser)
+  const [cart, setCart] = useState<Array<OrderMedicine>>([])
+
+  useEffect(() => {
+    setCart(getCartLocal())
+  }, [isOpened])
+
+  const handleDeleteAll = () => {
+    removeCartStorage()
+    setCart(getCartLocal())
+  }
+
+  const handleDeleteItem = (data: Medicine) => {
+    deleteMedicineLocal(data)
+    setCart(getCartLocal())
+  }
+
+  const handleCreateOrder = async () => {
+    try {
+      const res = await createOrderApi({
+        order_details: cart,
+        user_id: currentUser?.id
+      })
+
+      toast.success(res.data.message, { theme: 'colored' })
+    } catch (error) {
+      toast.error(error.message, { theme: 'colored' })
+    }
+  }
+
   return (
     <ClickAwayListener onClickAway={() => setIsOpened(false)}>
       {ref => (
-        <div ref={ref} className="relative flex flex-shrink-0 items-center">
+        <div
+          ref={ref}
+          className="relative hidden md:flex flex-shrink-0 items-center"
+        >
           <Tippy content="Order Cart" arrow={false}>
             <button
               className="p-link header-button"
@@ -21,7 +66,7 @@ const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
             </button>
           </Tippy>
           <div
-            className={`absolute z-[11] h-96 right-0 w-full top-full flex w-[400px] flex-col items-stretch rounded-md origin-top-right border bg-white shadow-lg transition-all duration-200 ${
+            className={`absolute z-[11] right-0 w-full top-full flex w-[400px] flex-col items-stretch rounded-md origin-top-right border bg-white shadow-lg transition-all duration-200 ${
               isOpened
                 ? 'visible scale-100 opacity-100'
                 : 'invisible scale-0 opacity-0'
@@ -33,10 +78,43 @@ const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
 
             <div className="w-100 border-b"></div>
 
-            <div className="w-full h-full flex flex-col overflow-y-auto"></div>
+            <div className="w-full h-80 flex flex-col overflow-y-auto">
+              {cart.length > 0 ? (
+                cart.map((product: OrderMedicine) => (
+                  <CartItem
+                    key={product.medicine.id}
+                    data={product}
+                    setCardPopupOpened={setIsOpened}
+                    onDelete={handleDeleteItem}
+                  />
+                ))
+              ) : (
+                <div className="w-full h-80 flex items-center justify-center">
+                  <img src={cartEmpty} alt="Empty" className="w-[70%]" />
+                </div>
+              )}
+            </div>
 
-            <div>
-              
+            <div className="text-md text-primary-100 font-semibold p-2 border-t flex justify-between">
+              <Button
+                disabled={cart.length <= 0}
+                label="Delete all"
+                className="p-button-danger p-button-text"
+                onClick={handleDeleteAll}
+              />
+              <div>
+                <Button
+                  disabled={cart.length <= 0}
+                  label="See details"
+                  className="p-button-success p-button-text ml-1"
+                />
+                <Button
+                  disabled={cart.length <= 0}
+                  label="Sale"
+                  className="p-button-success p-button-outlined ml-1"
+                  onClick={handleCreateOrder}
+                />
+              </div>
             </div>
           </div>
         </div>

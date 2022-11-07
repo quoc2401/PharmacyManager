@@ -11,6 +11,8 @@ class OrderDetail extends Model
 
     protected $table = "order_details";
 
+    public $timestamps = false;
+
     protected $fillable = [
         'order_id',
         'medicine_id',
@@ -19,11 +21,13 @@ class OrderDetail extends Model
         'discount'
     ];
 
-    public function Order() {
+    public function Order()
+    {
         return $this->belongsTo(Order::class);
     }
 
-    public function Medicine() {
+    public function Medicine()
+    {
         return $this->belongsTo(Medicine::class);
     }
 }

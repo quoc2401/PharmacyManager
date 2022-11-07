@@ -25,6 +25,7 @@ const Sidebar: FC<SidebarProps> = ({
     <>
       <div
         className={`lg:hidden fixed top-0 left-0 w-full h-full bg-overlay z-[8889] transition-all transition-duration-200 ${
+
           openedSideBar ? 'block' : 'hidden'
         }`}
         onClick={() => setOpenedSideBar(false)}

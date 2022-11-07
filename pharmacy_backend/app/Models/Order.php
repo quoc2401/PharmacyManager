@@ -11,16 +11,20 @@ class Order extends Model
 
     protected $table = "orders";
 
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'order_date',
     ];
 
-    public function User() {
+    public function User()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function OrderDetails() {
+    public function OrderDetails()
+    {
         return $this->hasMany(OrderDetail::class);
     }
 }

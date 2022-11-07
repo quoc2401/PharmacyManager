@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MedicineController;
+use App\Http\Controllers\Api\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,3 +54,6 @@ Route::delete('/medicines/{id}', [MedicineController::class, 'destroy']);
 
 //Category api routes
 Route::get('/categories', [CategoryController::class, 'index']);
+
+//Order api routes
+Route::post('/order', [OrderController::class, 'store']);
