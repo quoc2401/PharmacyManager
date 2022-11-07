@@ -21,7 +21,7 @@ import { Button } from 'primereact/button'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
-import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
+import { newDialogFooter } from '../../shared/DialogFooters'
 import { roleBodyTemplate, roleItemTemplate } from '../../shared/templates'
 
 const emptyUser = {
@@ -95,7 +95,6 @@ const ManageUser: FC = () => {
       setUsers(prev => {
         prev = prependArray(data, prev)
 
-        console.log(prev)
         return prev
       })
       toast.success('Create success')

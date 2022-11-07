@@ -1,3 +1,4 @@
+import { Medicine } from '../shared/types'
 import axiosClient from './axiosClient'
 
 export const getMedicinesApi = (page: number | null, params: any) => {
@@ -17,21 +18,11 @@ export const getMedicineByIdApi = (id: number | string | undefined) => {
 }
 
 export const createMedicineApi = (medicine: FormData) => {
-  return axiosClient.post(`/medicines`, medicine, {
-    headers: {
-      accept: 'multipart/form-data',
-      'content-type': 'multipart/form-data'
-    }
-  })
+  return axiosClient.post(`/medicines`, medicine)
 }
 
-export const updateMedicineApi = (id: number, medicine: FormData) => {
-  return axiosClient.put(`/medicines/${id}`, medicine, {
-    headers: {
-      accept: 'multipart/form-data',
-      'content-type': 'multipart/form-data'
-    }
-  })
+export const updateMedicineApi = (formData: FormData) => {
+  return axiosClient.putForm(`/medicines/${formData.get("id")}`, formData)
 }
 
 export const deleteMedicineApi = (id: number) => {

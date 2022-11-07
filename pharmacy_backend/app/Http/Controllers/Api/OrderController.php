@@ -55,7 +55,7 @@ class OrderController extends Controller
                     'medicine_id' => $d->medicine->id,
                     'unit_price' => $d->medicine->unit_price,
                     'quantity' => $d->quantity,
-                    'discount' => $d->medicine->discontinued,
+                    'discount' => 0,
                 ]);
             }
         }

@@ -45,16 +45,6 @@ const MedicineDetail: FC = () => {
     }
   }
 
-  const totalPrice = () => {
-    return (
-      medicine &&
-      Math.abs(
-        medicine?.unit_price -
-          medicine?.unit_price * (medicine?.discontinued / 100)
-      ).toFixed(2)
-    )
-  }
-
   return (
     <div className="flex justify-center items-center">
       <div className="w-[1200px] max-w-px-4 mx-auto flex flex-col md:flex-row bg-white shadow-md rounded">
@@ -80,25 +70,9 @@ const MedicineDetail: FC = () => {
             <Skeleton height="62px" />
           ) : (
             <div className="flex items-center space-x-2 py-4 px-3 bg-secondary-100">
-              <span
-                className={`${
-                  medicine && medicine.unit_in_stock > 0
-                    ? 'line-through text-slate-400'
-                    : 'text-red-600 font-semibold text-2xl'
-                }`}
-              >
+              <span className="text-red-600 font-semibold text-2xl">
                 {formatCurrency(medicine?.unit_price)}
               </span>
-              {medicine && medicine.unit_in_stock > 0 && (
-                <>
-                  <span className="text-2xl text-red-600 font-semibold">
-                    {formatCurrency(totalPrice())}
-                  </span>
-                  <span className="px-2 py-1 text-xs text-white font-medium bg-red-500">
-                    -{medicine?.discontinued}%
-                  </span>
-                </>
-              )}
             </div>
           )}
 

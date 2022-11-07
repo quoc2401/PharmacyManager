@@ -17,11 +17,12 @@ export interface Medicine {
   category_id: number | string
   unit_price: number
   unit_in_stock: number | 0
-  discontinued: number | 0
+  discontinued: boolean | false
   image: string
   describe: string
   uses: string
   trademark: string
+  image_file: File | null
 }
 
 export interface Category {

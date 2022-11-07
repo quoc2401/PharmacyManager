@@ -1,13 +1,25 @@
-import { FC, useState, useEffect, MouseEventHandler } from 'react'
+import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { createMedicineApi, getMedicinesApi } from '../../api/medicineApi'
-import { Medicine } from '../../shared/types'
-import { textEditor, dateEditor } from '../../components/Editors'
+import {
+  createMedicineApi,
+  getMedicinesApi,
+  updateMedicineApi
+} from '../../api/medicineApi'
+import { getCategoriesApi } from '../../api/categoryApi'
+import { Medicine, Category } from '../../shared/types'
+import {
+  textEditor,
+  checkBoxEditor,
+  imageSelector,
+  textAreaEditor,
+  categorySelector,
+  roleSelector
+} from '../../components/Editors'
 import { formatDate, prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
-import { roles, MedicineField } from '../../shared/constant'
+import { MedicineField } from '../../shared/constant'
 import { Toolbar } from 'primereact/toolbar'
 import { Dialog } from 'primereact/dialog'
 import { toast } from 'react-toastify'
@@ -16,9 +28,16 @@ import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
 import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
-import { imageBodyTemplate } from '../../shared/templates'
+import {
+  discontinuedBodyTemplate,
+  imageBodyTemplate
+} from '../../shared/templates'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Checkbox } from 'primereact/checkbox'
+import { FileUpload } from 'primereact/fileupload'
 
-const emptyMedicine = {
+const emptyMedicine: Medicine = {
   id: 0,
   name: '',
   category_id: '',
@@ -28,7 +47,8 @@ const emptyMedicine = {
   image: '',
   uses: '',
   trademark: '',
-  discontinued: 0
+  discontinued: false,
+  image_file: null
 }
 
 let lazyTimeOut: ReturnType<typeof setTimeout>
@@ -43,6 +63,7 @@ const ManageMedicine: FC = () => {
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [selectedMedicines, setSelectedMedicines] = useState<Medicine[]>([])
   const [globalFilterValue, setGlobalFilterValue] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
   const [filters, setFilters] = useState({
     name: { value: '', matchMode: FilterMatchMode.CONTAINS },
     describe: { value: '', matchMode: FilterMatchMode.CONTAINS },
@@ -50,6 +71,8 @@ const ManageMedicine: FC = () => {
     trademark: { value: '', matchMode: FilterMatchMode.CONTAINS },
     category_id: { value: '', matchMode: FilterMatchMode.EQUALS }
   })
+
+  const tempUrl = useRef<string>()
 
   const [lazyParams, setLazyParams] = useState({
     first: 0,
@@ -59,6 +82,7 @@ const ManageMedicine: FC = () => {
 
   useEffect(() => {
     loadMeds()
+    loadCategories()
   }, [lazyParams, filters])
 
   //functions
@@ -67,7 +91,7 @@ const ManageMedicine: FC = () => {
       setLoading(true)
       try {
         const res = await getMedicinesApi(lazyParams.page + 1, filters)
-        console.log(res.data.data)
+
         setMedicines(res.data.data)
         setTotalRecords(res.data.meta.total)
       } catch (e) {
@@ -80,45 +104,83 @@ const ManageMedicine: FC = () => {
     return () => clearTimeout(lazyTimeOut)
   }
 
-  //create
-  const saveMedicine = async () => {
+  const loadCategories = async () => {
+    try {
+      const res = await getCategoriesApi(0, null)
+      setCategories(res.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      category_id: 1,
+      unit_price: 10000,
+      unit_in_stock: 10,
+      describe: '',
+      uses: '',
+      trademark: '',
+      discontinued: 0,
+      image_file: null
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required(),
+      category_id: Yup.number().required(),
+      image_file: Yup.object().required()
+    }),
+    onSubmit: async value => {
+      setLoading(true)
+      try {
+        console.log(value)
+        const formData = new FormData()
+        Object.keys(value).map(k => {
+          formData.append(k, value[k])
+        })
+        const res = await createMedicineApi(formData)
+        const data = res.data.data
+
+        if (res.status === 200) {
+          setMedicines(prev => {
+            prev = prependArray(data, prev)
+
+            return prev
+          })
+
+          toast.success('create success')
+          setNewDialog(false)
+        } else toast.error('failed to create')
+      } catch (error) {
+        console.log(error)
+      }
+      setLoading(false)
+    }
+  })
+
+  //update
+  const updateMedicine = async (medicine: Medicine) => {
     setLoading(true)
     try {
-      //   const res = await createMedicineApi(medicine)
-      //   const data = res.data.data
-      //   setMedicines(prev => {
-      //     prev = prependArray(data, prev)
+      const formData = new FormData()
+      Object.keys(medicine).map(k => {
+        formData.append(k, medicine[k])
+      })
+      const res = await updateMedicineApi(formData)
 
-      //     return prev
-      //   })
-      toast.success('Create success')
+      // console.log(res)
+
+      if (res.status !== 200) {
+        loadMeds()
+        toast.error('update failed')
+      } else {
+        toast.success('update success')
+      }
     } catch (error) {
       console.log(error)
     }
     setLoading(false)
-    setNewDialog(false)
   }
-
-  //update
-  //   const onRowEditComplete = async (e: any) => {
-  //     setLoading(true)
-  //     const _users = [...users]
-  //     const { newData, index } = e
-
-  //     newData.birth_date = formatDate(newData.birth_date)
-
-  //     _users[index] = newData
-  //     try {
-  //       const res = await updateUser(newData)
-
-  //       console.log(res)
-
-  //       if (res.status == 200) setUsers(_users)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //     setLoading(false)
-  //   }
 
   //delete
   //   const deleteSelectedUsers = async () => {
@@ -175,6 +237,40 @@ const ManageMedicine: FC = () => {
 
   const onRowEditChange = (e: any) => {
     setEditingRows(e.data)
+  }
+
+  const onCellEditComplete = (e: any) => {
+    const { rowData, newValue, field, originalEvent: event } = e
+    switch (field) {
+      case 'category_id':
+        rowData[field] = newValue
+        break
+      case 'unit_price':
+        if (newValue < 1000 && newValue % 1000 !== 0) event.preventDefault()
+        else rowData[field] = newValue
+        break
+      case 'unit_in_stock':
+        if (newValue < 0) event.preventDefault()
+        else rowData[field] = newValue
+        break
+      case 'discontinued':
+        rowData[field] = newValue
+        break
+      case 'image':
+        if (tempUrl.current !== null && tempUrl.current !== undefined)
+          URL.revokeObjectURL(tempUrl.current)
+
+        rowData['image_file'] = newValue
+        tempUrl.current = URL.createObjectURL(newValue)
+        rowData[field] = tempUrl.current
+
+        break
+      default:
+        if (newValue.trim().length > 0) rowData[field] = newValue
+        else event.preventDefault()
+        break
+    }
+    updateMedicine(rowData)
   }
 
   const customFilter = (field: MedicineField, placeholder: string) => {
@@ -284,7 +380,7 @@ const ManageMedicine: FC = () => {
 
   useTitle(`Pharmacy - Manage User`)
   return (
-    <div className="grid-cols-12">
+    <div className="grid-cols-12 max-w-full overflow-hidden">
       <div className="card">
         <Toolbar left={leftToolbarTemplate}></Toolbar>
         <DataTable
@@ -292,7 +388,7 @@ const ManageMedicine: FC = () => {
           header={renderHeader()}
           value={medicines}
           paginator
-          rows={10}
+          rows={5}
           loading={loading}
           responsiveLayout="scroll"
           size="small"
@@ -300,18 +396,20 @@ const ManageMedicine: FC = () => {
           totalRecords={totalRecords}
           onPage={onPage}
           first={lazyParams.first}
-          editMode="row"
-          editingRows={editingRows}
-          onRowEditChange={onRowEditChange}
+          editMode="cell"
+          selectOnEdit={false}
+          // editingRows={editingRows}
+          // onRowEditChange={onRowEditChange}
           //   onRowEditComplete={onRowEditComplete}
           rowHover
           emptyMessage="No medicine found!"
-          globalFilterFields={['username', 'fisrt_name']}
+          globalFilterFields={['username', 'first_name']}
           globalFilter={globalFilterValue}
           filterDisplay="row"
           filters={filters}
           selection={selectedMedicines}
           onSelectionChange={e => setSelectedMedicines(e.value)}
+          selectionAutoFocus={false}
         >
           <Column
             selectionMode="multiple"
@@ -322,21 +420,30 @@ const ManageMedicine: FC = () => {
           <Column
             field="name"
             header="Name"
-            className="min-w-[14rem]"
+            className="min-w-[10rem]"
             editor={options => textEditor(options)}
+            onCellEditComplete={onCellEditComplete}
             filter
             showFilterMenu={false}
             filterElement={customFilter(
               MedicineField.NAME,
-              'Search by Username...'
+              'Search by name...'
             )}
             onFilterClear={() => clearFilter(MedicineField.NAME)}
           />
           <Column
             field="category_id"
+            body={rowData =>
+              categories.find(c => c.id === rowData.category_id)?.name
+            }
             header="Category"
-            className="min-w-[3rem]"
-            // editor={options => textEditor(options)}
+            className="min-w-[20rem]"
+            editor={options => categorySelector(options, categories)}
+            cellEditValidator={e => {
+              if (e.originalEvent.target.nodeName == 'LI') return false
+              return true
+            }}
+            onCellEditComplete={onCellEditComplete}
             // filter
             // showFilterMenu={false}
             // filterElement={customFilter(
@@ -350,13 +457,16 @@ const ManageMedicine: FC = () => {
             field="unit_price"
             header="Unit Price"
             className="min-w-[8rem]"
-            editor={options => textEditor(options)}
+            editor={options => textEditor(options, 'number', 1000)}
+            onCellEditComplete={onCellEditComplete}
             align="center"
           />
           <Column
             field="unit_in_stock"
             header="Unit in stock"
             className="min-w-[8rem]"
+            editor={options => textEditor(options, 'number')}
+            onCellEditComplete={onCellEditComplete}
             align="center"
           />
           <Column
@@ -364,137 +474,168 @@ const ManageMedicine: FC = () => {
             header="Quantity per unit"
             className="min-w-[12rem]"
             editor={options => textEditor(options)}
+            onCellEditComplete={onCellEditComplete}
           />
           <Column
             field="uses"
             header="Uses"
             className="min-w-[26rem]"
-            editor={options => textEditor(options)}
+            editor={options => textAreaEditor(options)}
+            onCellEditComplete={onCellEditComplete}
           />
           <Column
             field="trademark"
             header="Trademark"
-            className="min-w-[14rem]"
+            className="min-w-[10rem]"
             editor={options => textEditor(options)}
+            onCellEditComplete={onCellEditComplete}
           />
           <Column
             field="image"
             header="Image"
-            className="min-w-[4rem]"
-            editor={options => textEditor(options)}
+            className="min-w-[12rem]"
+            editor={options => imageSelector(options)}
+            onCellEditComplete={onCellEditComplete}
             body={imageBodyTemplate}
           />
           <Column
             field="discontinued"
             header="Discontinued"
             className="min-w-[2rem]"
-            editor={options => textEditor(options)}
+            body={discontinuedBodyTemplate}
+            editor={options => checkBoxEditor(options)}
+            onCellEditComplete={onCellEditComplete}
             align="center"
-          />
-          <Column
-            rowEditor
-            className="min-w-[6rem] w-[5%]"
-            bodyStyle={{ textAlign: 'center' }}
           />
         </DataTable>
       </div>
       <Dialog
         visible={newDialog}
-        header="New User"
+        header="New Medicine"
         modal
         className="p-fluid w-[40%]"
-        // footer={newDialogFooter(save, hideNewDialog)}
+        footer={newDialogFooter(() => formik.submitForm(), hideNewDialog)}
         onHide={hideNewDialog}
       >
-        {/* <div className="field mb-5">
-          <label htmlFor="name">Name</label>
-          <InputText
-            id="name"
-            name="name"
-            value={medicine.name}
-            required
-            autoFocus
-            placeholder="Enter name..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.USERNAME)}
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="password">Password</label>
-          <InputText
-            id="password"
-            name="password"
-            value={medicine.describe}
-            required
-            placeholder="Enter password..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.PASSWORD)}
-          />
-        </div>
-        <div className="flex mb-5 space-x-2">
-          <div className="field">
-            <label htmlFor="first_name">First Name</label>
+        <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
+          <div className="field mb-5">
+            <label htmlFor="name">Name</label>
             <InputText
-              id="first_name"
-              name="first_name"
-              value={user.first_name}
+              id="name"
+              name="name"
+              value={formik.values.name}
               required
-              placeholder="Enter First Name..."
+              autoFocus
+              placeholder="Enter name..."
               className="rounded-md"
-              onChange={e => handleInput(e.target.value, UserField.FIRST_NAME)}
+              onChange={formik.handleChange}
             />
           </div>
-          <div className="field">
-            <label htmlFor="last_name">Last Name</label>
-            <InputText
-              id="last_name"
-              name="last_name"
-              value={user.last_name}
-              required
-              placeholder="Enter Last Name..."
-              className="rounded-md"
-              onChange={e => handleInput(e.target.value, UserField.LAST_NAME)}
+          <div className="field mb-5">
+            <label htmlFor="category_id">Category</label>
+            <Dropdown
+              id="category_id"
+              name="category_id"
+              className="field"
+              value={formik.values.category_id}
+              options={categories}
+              optionLabel="name"
+              optionValue="id"
+              onChange={formik.handleChange}
             />
           </div>
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="birth_date">Birth Date</label>
-          <Calendar
-            id="birth_date"
-            name="birth_date"
-            value={new Date(Date.parse(user.birth_date || ''))}
-            showIcon
-            dateFormat="yy-mm-dd"
-            placeholder="Choose Birth Date..."
-            onChange={e =>
-              handleInput(formatDate(e.target.value), UserField.BIRTH_DATE)
-            }
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="phone">Phone</label>
-          <InputText
-            id="phone"
-            name="phone"
-            value={user.phone || ''}
-            required
-            placeholder="Enter Phone number..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.PHONE)}
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="user_role">User Role</label>
-          <Dropdown
-            id="user_role"
-            name="user_role"
-            value={user.user_role}
-            options={roles}
-            optionLabel="name"
-            optionValue="code"
-            onChange={e => handleInput(e.target.value, UserField.USER_ROLE)}
-          />
-        </div> */}
+          <div className="flex mb-5 space-x-2">
+            <div className="field">
+              <label htmlFor="unit_price">Unit Price</label>
+              <InputText
+                id="unit_price"
+                name="unit_price"
+                value={formik.values.unit_price}
+                required
+                type="number"
+                step="1000"
+                placeholder="Enter unit price..."
+                className="rounded-md"
+                onChange={formik.handleChange}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="unit_in_stock">Unit in stock</label>
+              <InputText
+                id="unit_in_stock"
+                name="unit_in_stock"
+                value={formik.values.unit_in_stock}
+                type="number"
+                required
+                placeholder="Enter unit in stock..."
+                className="rounded-md"
+                onChange={formik.handleChange}
+              />
+            </div>
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="describe">Describe</label>
+            <InputText
+              id="describe"
+              name="describe"
+              value={formik.values.describe}
+              required
+              placeholder="Enter describe..."
+              className="rounded-md"
+              onChange={formik.handleChange}
+            />
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="uses">Uses</label>
+            <InputText
+              id="uses"
+              name="uses"
+              value={formik.values.uses}
+              placeholder="Enter uses..."
+              className="rounded-md"
+              onChange={formik.handleChange}
+            />
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="trademark">Trademark</label>
+            <InputText
+              id="trademark"
+              name="trademark"
+              required
+              value={formik.values.trademark}
+              placeholder="Enter trademark..."
+              className="rounded-md"
+              onChange={formik.handleChange}
+            />
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="file">Image</label>
+            <FileUpload
+              id="file"
+              name="file"
+              mode="basic"
+              accept="image/*"
+              maxFileSize={1000000}
+              className="rounded-md"
+              onSelect={e => {
+                formik.setFieldValue('image_file', e.files[0])
+              }}
+            />
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="discontinued">Discontinued</label>
+            <Checkbox
+              id="discontinued"
+              name="discontinued"
+              checked={formik.values.discontinued}
+              type="checkbox"
+              className="rounded-md"
+              onChange={e => formik.setFieldValue('discontinued', e.checked)}
+              trueValue={1}
+              falseValue={0}
+            />
+          </div>
+        </form>
       </Dialog>
 
       <Dialog

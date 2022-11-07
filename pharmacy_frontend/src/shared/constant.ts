@@ -1,6 +1,3 @@
-import { Button } from 'primereact/button'
-import React from 'react'
-
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
   { name: 'Employee', code: 'EMPLOYEE' }
@@ -32,5 +29,6 @@ export enum MedicineField {
   IMAGE = 'image',
   DESCRIBE = 'describe',
   USES = 'uses',
-  TRADEMARK = 'trademark'
+  TRADEMARK = 'trademark',
+  FILE = 'image_file'
 }
