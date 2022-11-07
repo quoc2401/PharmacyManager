@@ -30,3 +30,13 @@ export interface Category {
   name: string
   description: string
 }
+
+export interface OrderMedicine {
+  medicine: Medicine
+  quantity: number | null
+}
+
+export interface Order {
+  order_details: Array<OrderMedicine>
+  user_id: number | undefined
+}

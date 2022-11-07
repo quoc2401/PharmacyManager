@@ -1,21 +1,19 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react'
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
 import GridItem from '../../components/GridItem'
 import { Category, Medicine } from '../../shared/types'
 import { useTitle } from '../../hooks/useTitle'
 import { InputText } from 'primereact/inputtext'
 import { Paginator } from 'primereact/paginator'
-import { controller } from '../../api/axiosClient'
 import { getMedicinesApi } from '../../api/medicineApi'
 import CategoryDropdown from '../../components/CategoryDropdown'
 import { FilterMatchMode } from 'primereact/api'
-
-let lazyTimeout: ReturnType<typeof setTimeout>
 
 const Home: FC = () => {
   const [medicines, setMedicines] = useState<Medicine[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [totalRecords, setTotalRecords] = useState(1)
+  const lazyTimeout = useRef<ReturnType<typeof setTimeout>>()
   const [selectedCategory, setSelectedCategory] = useState<Category>({
     id: 0,
     name: 'Tất cả',
@@ -33,18 +31,18 @@ const Home: FC = () => {
   useTitle('Pharmacy - Home')
 
   useEffect(() => {
-    lazyTimeout = setTimeout (() => {
+    lazyTimeout.current = setTimeout(() => {
       try {
-        getMeds()
+        getMedicines()
       } catch (err) {
         setError(err)
         setLoading(false)
       }
     }, 1000)
-    return () => clearTimeout(lazyTimeout)
+    return () => clearTimeout(lazyTimeout.current)
   }, [lazyParams, filters])
 
-  const getMeds = async () => {
+  const getMedicines = async () => {
     setLoading(true)
     const res = await getMedicinesApi(lazyParams.page + 1, filters)
     setTotalRecords(res.data.meta.total)
@@ -54,7 +52,7 @@ const Home: FC = () => {
 
   useEffect(() => {
     setFilters(prev => {
-      let _filters = {...prev}
+      const _filters = { ...prev }
       _filters.category_id.value = selectedCategory.id
       _filters.name.value = ''
       _filters.uses.value = ''
@@ -62,23 +60,23 @@ const Home: FC = () => {
       return _filters
     })
     setLazyParams(prev => {
-      let _lazyParams = {...prev}
+      const _lazyParams = { ...prev }
       _lazyParams.first = 0
       _lazyParams.page = 0
 
       return _lazyParams
     })
-    
-    lazyTimeout = setTimeout(async () => {
+
+    lazyTimeout.current = setTimeout(async () => {
       try {
-        await getMeds()
+        await getMedicines()
       } catch (error) {
         console.log(error)
         setLoading(false)
       }
-    }, 1000);
+    }, 1000)
 
-    return () => clearTimeout(lazyTimeout)
+    return () => clearTimeout(lazyTimeout.current)
   }, [selectedCategory])
 
   const onCustomPageChange = (event: any) => {
@@ -87,7 +85,7 @@ const Home: FC = () => {
 
   const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
     setFilters(prev => {
-      let _filters = {...prev}
+      const _filters = { ...prev }
       _filters.name.value = e.target.value
       _filters.uses.value = e.target.value
 

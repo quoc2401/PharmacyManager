@@ -1,11 +1,22 @@
 import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
-import { DataTable} from 'primereact/datatable'
+import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { createMedicineApi, getMedicinesApi, updateMedicineApi } from '../../api/medicineApi' 
+import {
+  createMedicineApi,
+  getMedicinesApi,
+  updateMedicineApi
+} from '../../api/medicineApi'
 import { getCategoriesApi } from '../../api/categoryApi'
 import { Medicine, Category } from '../../shared/types'
-import { textEditor, checkBoxEditor, imageSelector, textAreaEditor, categorySelector, roleSelector} from '../../components/Editors'
+import {
+  textEditor,
+  checkBoxEditor,
+  imageSelector,
+  textAreaEditor,
+  categorySelector,
+  roleSelector
+} from '../../components/Editors'
 import { formatDate, prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
 import { MedicineField } from '../../shared/constant'
@@ -17,13 +28,16 @@ import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
 import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
-import { discontinuedBodyTemplate, imageBodyTemplate } from '../../shared/templates'
+import {
+  discontinuedBodyTemplate,
+  imageBodyTemplate
+} from '../../shared/templates'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Checkbox } from 'primereact/checkbox'
 import { FileUpload } from 'primereact/fileupload'
 
-const emptyMedicine:Medicine = {
+const emptyMedicine: Medicine = {
   id: 0,
   name: '',
   category_id: '',
@@ -37,7 +51,7 @@ const emptyMedicine:Medicine = {
   image_file: null
 }
 
-let lazyTimeOut: ReturnType<typeof setTimeout>; 
+let lazyTimeOut: ReturnType<typeof setTimeout>
 
 const ManageMedicine: FC = () => {
   const [loading, setLoading] = useState(false)
@@ -47,7 +61,7 @@ const ManageMedicine: FC = () => {
   const [medicine, setMedicine] = useState<Medicine>(emptyMedicine)
   const [newDialog, setNewDialog] = useState(false)
   const [deleteDialog, setDeleteDialog] = useState(false)
-  const [selectedmedicines, setSelectedMedicines] = useState<Medicine[]>([])
+  const [selectedMedicines, setSelectedMedicines] = useState<Medicine[]>([])
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [filters, setFilters] = useState({
@@ -55,9 +69,9 @@ const ManageMedicine: FC = () => {
     describe: { value: '', matchMode: FilterMatchMode.CONTAINS },
     uses: { value: '', matchMode: FilterMatchMode.CONTAINS },
     trademark: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    category_id: {value: '', matchMode: FilterMatchMode.EQUALS}
+    category_id: { value: '', matchMode: FilterMatchMode.EQUALS }
   })
-  
+
   const tempUrl = useRef<string>()
 
   const [lazyParams, setLazyParams] = useState({
@@ -95,7 +109,6 @@ const ManageMedicine: FC = () => {
       const res = await getCategoriesApi(0, null)
       setCategories(res.data.data)
     } catch (error) {
-      
       console.log(error)
     }
   }
@@ -123,26 +136,22 @@ const ManageMedicine: FC = () => {
         console.log(value)
         const formData = new FormData()
         Object.keys(value).map(k => {
-            formData.append(k, value[k])
+          formData.append(k, value[k])
         })
         const res = await createMedicineApi(formData)
         const data = res.data.data
-        
-        if(res.status === 200) {
+
+        if (res.status === 200) {
           setMedicines(prev => {
             prev = prependArray(data, prev)
-            
+
             return prev
           })
-          
-          toast.success("create success")
-          setNewDialog(false)
-        }
-        else
-          toast.error("failed to create")
 
+          toast.success('create success')
+          setNewDialog(false)
+        } else toast.error('failed to create')
       } catch (error) {
-        
         console.log(error)
       }
       setLoading(false)
@@ -163,14 +172,10 @@ const ManageMedicine: FC = () => {
 
       if (res.status !== 200) {
         loadMeds()
-        toast.error("update failed")
+        toast.error('update failed')
+      } else {
+        toast.success('update success')
       }
-      else {
-
-        toast.success("update success")
-      }
-
-
     } catch (error) {
       console.log(error)
     }
@@ -178,34 +183,34 @@ const ManageMedicine: FC = () => {
   }
 
   //delete
-//   const deleteSelectedUsers = async () => {
-//     setLoading(true)
-//     try {
-//       if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
-//       else await deleteUsers(selectedUsers)
+  //   const deleteSelectedUsers = async () => {
+  //     setLoading(true)
+  //     try {
+  //       if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
+  //       else await deleteUsers(selectedUsers)
 
-//       const _users = users.filter(val => !selectedUsers.includes(val))
+  //       const _users = users.filter(val => !selectedUsers.includes(val))
 
-//       setSelectedUsers([])
-//       setUsers(_users)
-//       setDeleteDialog(false)
-//       toast.success('delete success')
+  //       setSelectedUsers([])
+  //       setUsers(_users)
+  //       setDeleteDialog(false)
+  //       toast.success('delete success')
 
-//       loadUsers()
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
+  //       loadUsers()
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
 
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value
     const _filters = { ...filters }
     // _filters['global'].value = value;
 
-      filters['name'].value = value
-      filters['uses'].value = value
-      filters['describe'].value = value
-      filters['trademark'].value = value
+    filters['name'].value = value
+    filters['uses'].value = value
+    filters['describe'].value = value
+    filters['trademark'].value = value
 
     setFilters(_filters)
     setGlobalFilterValue(value)
@@ -235,45 +240,38 @@ const ManageMedicine: FC = () => {
   }
 
   const onCellEditComplete = (e: any) => {
-    let { rowData, newValue, field, originalEvent: event } = e;
+    const { rowData, newValue, field, originalEvent: event } = e
     switch (field) {
-        case 'category_id':
-            rowData[field] = newValue
-            break
-        case 'unit_price':
-            if(newValue < 1000 && newValue % 1000 !== 0)
-              event.preventDefault();
-            else
-              rowData[field] = newValue
-              break
-        case 'unit_in_stock':
-            if(newValue < 0)
-              event.preventDefault();
-            else
-              rowData[field] = newValue
-            break
-        case 'discontinued':
-            rowData[field] = newValue
-            break
-        case 'image':
-            if(tempUrl.current !== null && tempUrl.current !== undefined) 
-              URL.revokeObjectURL(tempUrl.current)
+      case 'category_id':
+        rowData[field] = newValue
+        break
+      case 'unit_price':
+        if (newValue < 1000 && newValue % 1000 !== 0) event.preventDefault()
+        else rowData[field] = newValue
+        break
+      case 'unit_in_stock':
+        if (newValue < 0) event.preventDefault()
+        else rowData[field] = newValue
+        break
+      case 'discontinued':
+        rowData[field] = newValue
+        break
+      case 'image':
+        if (tempUrl.current !== null && tempUrl.current !== undefined)
+          URL.revokeObjectURL(tempUrl.current)
 
-            rowData['image_file'] = newValue
-            tempUrl.current = URL.createObjectURL(newValue)
-            rowData[field] = tempUrl.current
-            
-            break
-        default:
-            if (newValue.trim().length > 0)
-                rowData[field] = newValue;
-            else
-                event.preventDefault();
-            break;
+        rowData['image_file'] = newValue
+        tempUrl.current = URL.createObjectURL(newValue)
+        rowData[field] = tempUrl.current
 
+        break
+      default:
+        if (newValue.trim().length > 0) rowData[field] = newValue
+        else event.preventDefault()
+        break
     }
     updateMedicine(rowData)
-}
+  }
 
   const customFilter = (field: MedicineField, placeholder: string) => {
     return (
@@ -288,10 +286,10 @@ const ManageMedicine: FC = () => {
 
   const clearFilter = (field: MedicineField) => {
     setFilters(prev => {
-      let _filters = {...prev}
+      const _filters = { ...prev }
       _filters[field].value = ''
 
-      return _filters;
+      return _filters
     })
   }
 
@@ -326,7 +324,7 @@ const ManageMedicine: FC = () => {
           icon="pi pi-trash"
           className="p-button-danger rounded-md mr-2"
           onClick={confirmDeleteSelected}
-          disabled={!selectedmedicines || !selectedmedicines.length}
+          disabled={!selectedMedicines || !selectedMedicines.length}
         />
       </>
     )
@@ -352,6 +350,15 @@ const ManageMedicine: FC = () => {
         />
       </>
     )
+  }
+
+  const handleInput = (field: MedicineField, value: string) => {
+    setMedicine(prev => {
+      const _medicine = { ...prev }
+      _medicine[field] = value
+
+      return _medicine
+    })
   }
 
   const renderHeader = () => {
@@ -393,14 +400,14 @@ const ManageMedicine: FC = () => {
           selectOnEdit={false}
           // editingRows={editingRows}
           // onRowEditChange={onRowEditChange}
-        //   onRowEditComplete={onRowEditComplete}
+          //   onRowEditComplete={onRowEditComplete}
           rowHover
           emptyMessage="No medicine found!"
-          globalFilterFields={['username', 'fisrt_name']}
+          globalFilterFields={['username', 'first_name']}
           globalFilter={globalFilterValue}
           filterDisplay="row"
           filters={filters}
-          selection={selectedmedicines}
+          selection={selectedMedicines}
           onSelectionChange={e => setSelectedMedicines(e.value)}
           selectionAutoFocus={false}
         >
@@ -419,21 +426,23 @@ const ManageMedicine: FC = () => {
             filter
             showFilterMenu={false}
             filterElement={customFilter(
-                MedicineField.NAME,
+              MedicineField.NAME,
               'Search by name...'
             )}
             onFilterClear={() => clearFilter(MedicineField.NAME)}
           />
           <Column
             field="category_id"
-            body={rowData => categories.find(c => c.id === rowData.category_id)?.name}
+            body={rowData =>
+              categories.find(c => c.id === rowData.category_id)?.name
+            }
             header="Category"
             className="min-w-[20rem]"
             editor={options => categorySelector(options, categories)}
-            cellEditValidator={(e) => { 
-              if (e.originalEvent.target.nodeName == 'LI')
-                return false 
-              return true }}
+            cellEditValidator={e => {
+              if (e.originalEvent.target.nodeName == 'LI') return false
+              return true
+            }}
             onCellEditComplete={onCellEditComplete}
             // filter
             // showFilterMenu={false}
@@ -448,7 +457,7 @@ const ManageMedicine: FC = () => {
             field="unit_price"
             header="Unit Price"
             className="min-w-[8rem]"
-            editor={options => textEditor(options, "number", 1000)}
+            editor={options => textEditor(options, 'number', 1000)}
             onCellEditComplete={onCellEditComplete}
             align="center"
           />
@@ -456,7 +465,7 @@ const ManageMedicine: FC = () => {
             field="unit_in_stock"
             header="Unit in stock"
             className="min-w-[8rem]"
-            editor={options => textEditor(options, "number")}
+            editor={options => textEditor(options, 'number')}
             onCellEditComplete={onCellEditComplete}
             align="center"
           />
@@ -505,7 +514,7 @@ const ManageMedicine: FC = () => {
         header="New Medicine"
         modal
         className="p-fluid w-[40%]"
-        footer={newDialogFooter(()=> formik.submitForm(), hideNewDialog)}
+        footer={newDialogFooter(() => formik.submitForm(), hideNewDialog)}
         onHide={hideNewDialog}
       >
         <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
@@ -609,7 +618,7 @@ const ManageMedicine: FC = () => {
               maxFileSize={1000000}
               className="rounded-md"
               onSelect={e => {
-                formik.setFieldValue("image_file", e.files[0])
+                formik.setFieldValue('image_file', e.files[0])
               }}
             />
           </div>
@@ -621,7 +630,7 @@ const ManageMedicine: FC = () => {
               checked={formik.values.discontinued}
               type="checkbox"
               className="rounded-md"
-              onChange={e => formik.setFieldValue("discontinued", e.checked)}
+              onChange={e => formik.setFieldValue('discontinued', e.checked)}
               trueValue={1}
               falseValue={0}
             />
@@ -642,9 +651,7 @@ const ManageMedicine: FC = () => {
             className="pi pi-exclamation-triangle mr-3"
             style={{ fontSize: '2rem' }}
           />
-          {
-            <span>Are you sure you want to delete the selected items?</span>
-          }
+          {<span>Are you sure you want to delete the selected items?</span>}
         </div>
       </Dialog>
     </div>

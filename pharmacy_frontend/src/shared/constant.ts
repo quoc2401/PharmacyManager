@@ -1,7 +1,3 @@
-import { Button } from 'primereact/button'
-import React from 'react'
-import { getCategoriesApi } from '../api/categoryApi';
-
 export const roles = [
   { name: 'Admin', code: 'ADMIN' },
   { name: 'Employee', code: 'EMPLOYEE' }

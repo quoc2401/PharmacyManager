@@ -69,12 +69,4 @@ class UserRepository implements IRepository
 
         return true;
     }
-
-    public function patchDelte($users) {
-        foreach($users as $u) {
-            $this->users->destroy($u["id"]);
-        }
-
-        return true;
-    }
 }

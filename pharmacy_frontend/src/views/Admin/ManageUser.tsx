@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, MouseEventHandler } from 'react'
 import { useTitle } from '../../hooks/useTitle'
-import { DataTable} from 'primereact/datatable'
+import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import {
   getUsers,
@@ -21,7 +21,7 @@ import { Button } from 'primereact/button'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
-import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
+import { newDialogFooter } from '../../shared/DialogFooters'
 import { roleBodyTemplate, roleItemTemplate } from '../../shared/templates'
 
 const emptyUser = {
@@ -37,7 +37,7 @@ const emptyUser = {
   updated_at: ''
 }
 
-let lazyTimeOut: ReturnType<typeof setTimeout>; 
+let lazyTimeOut: ReturnType<typeof setTimeout>
 
 const ManageUser: FC = () => {
   const [loading, setLoading] = useState(false)
@@ -54,7 +54,7 @@ const ManageUser: FC = () => {
     first_name: { value: '', matchMode: FilterMatchMode.CONTAINS },
     last_name: { value: '', matchMode: FilterMatchMode.CONTAINS },
     phone: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    user_role: {value: '', matchMode: FilterMatchMode.EQUALS}
+    user_role: { value: '', matchMode: FilterMatchMode.EQUALS }
   })
 
   const [lazyParams, setLazyParams] = useState({
@@ -94,7 +94,7 @@ const ManageUser: FC = () => {
       const data = res.data.data
       setUsers(prev => {
         prev = prependArray(data, prev)
-        
+
         return prev
       })
       toast.success('Create success')
@@ -203,25 +203,25 @@ const ManageUser: FC = () => {
 
   const customRoleFilter = (field: UserField) => {
     return (
-      <Dropdown 
-        optionLabel='name'
-        optionValue='code'
+      <Dropdown
+        optionLabel="name"
+        optionValue="code"
         value={filters[field].value}
         options={roles}
         itemTemplate={roleItemTemplate}
         placeholder="Search by role"
         className="rounded-md"
-        onChange={e => handleFilter(field, e.target.value)} 
+        onChange={e => handleFilter(field, e.target.value)}
       />
     )
   }
 
   const clearFilter = (field: UserField) => {
     setFilters(prev => {
-      let _filters = {...prev}
+      const _filters = { ...prev }
       _filters[field].value = ''
 
-      return _filters;
+      return _filters
     })
   }
 
@@ -285,7 +285,7 @@ const ManageUser: FC = () => {
   }
 
   const handleInput = (value: string, field: UserField) => {
-    let _user = { ...user }
+    const _user = { ...user }
     _user[field] = value
     setUser(_user)
   }

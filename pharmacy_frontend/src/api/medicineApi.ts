@@ -9,11 +9,11 @@ export const getMedicinesApi = (page: number | null, params: any) => {
         )
         .join('&')
     : ''
-    
+
   return axiosClient.get(`/medicines?page=${page}&${queryParams}`)
 }
 
-export const getMedicineByIdApi = (id: number) => {
+export const getMedicineByIdApi = (id: number | string | undefined) => {
   return axiosClient.get(`/medicines/${id}`)
 }
 

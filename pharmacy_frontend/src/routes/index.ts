@@ -1,5 +1,5 @@
 import Home from '../views/Home/Home'
-import Detail from '../views/Home/Detail'
+import MedicineDetail from '../views/Home/MedicineDetail'
 import Dashboard from '../views/Admin/Dashboard'
 import ManageUser from '../views/Admin/ManageUser'
 import ManageMedicine from '../views/Admin/ManageMedicine'
@@ -11,15 +11,15 @@ export const homeRoute = [
   },
   {
     path: '/medicine-details/:name/:id',
-    component: Detail
+    component: MedicineDetail
   },
   {
     path: '/order-cart',
-    component: Detail
+    component: MedicineDetail
   },
   {
     path: '/order-details/:id',
-    component: Detail
+    component: MedicineDetail
   }
 ]
 

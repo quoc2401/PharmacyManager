@@ -7,30 +7,36 @@ import { Link } from 'react-router-dom'
 import { convertParam } from '../shared/constant'
 import ImgFade from './ImgFade'
 import { formatCurrency } from '../shared/utils'
+import { addCartLocal, getMedicineByIdLocal } from '../shared/localStorage'
+import { toast } from 'react-toastify'
 
 interface MedicineItemProps {
   item: Medicine
 }
 
 const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
-  const [number, setNumber] = useState<number | null>(0)
+  const [quantity, setQuantity] = useState<number | null>(0)
 
-  const totalPrice = () => {
-    return Math.abs(
-      item.unit_price - item.unit_price * (item.discontinued / 100)
-    ).toFixed(2)
+  const handleAddCart = () => {
+    const medicineLocal = getMedicineByIdLocal(item)
+    console.log(medicineLocal)
+    if (medicineLocal && medicineLocal.quantity >= item.unit_in_stock) {
+      toast.error('Đã đạt số lượng tối đa. Không còn hàng')
+    } else {
+      addCartLocal({
+        medicine: { ...item },
+        quantity: quantity
+      })
+      setQuantity(1)
+      toast.success('Đã thêm vào giỏ hàng')
+    }
   }
 
   return (
     <div className="flex flex-col bg-slate-100 rounded-md overflow-hidden border overflow-hidden shadow-md">
-      <div className="hover:brightness-90 transition-all transition-duration-200 relative">
-        {item.discontinued > 0 && (
-          <div className="absolute top-2 right-2 bg-red-500 rounded py-1 px-2 text-white text-sm">
-            -{Number(item.discontinued)}%
-          </div>
-        )}
+      <div className="hover:brightness-90 transition-all transition-duration-200 relative min-h-[62%] flex items-center">
         <Link to={`/medicine-details/${convertParam(item.name)}/${item.id}`}>
-          <ImgFade className="w-full" lazy_src={item.image} />
+          <ImgFade className="w-full object-cover" lazy_src={item.image} />
         </Link>
       </div>
       <div className="px-3 pt-2 pb-3">
@@ -49,9 +55,7 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
           )}
         </div>
         <div className="text-red-500 mt-2 font-medium text-lg">
-          {formatCurrency(
-            item.discontinued > 0 ? totalPrice() : item.unit_price
-          )}
+          {formatCurrency(item.unit_price)}
         </div>
         <div className="text-slate-500 mt-2 text-sm">
           Số lượng: {item.unit_in_stock}
@@ -62,8 +66,8 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
             max={item.unit_in_stock}
             step={1}
             inputId="horizontal"
-            value={number}
-            onValueChange={e => setNumber(e.target.value)}
+            value={quantity}
+            onValueChange={e => setQuantity(e.target.value)}
             showButtons
             mode="decimal"
             buttonLayout="horizontal"
@@ -85,6 +89,7 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
                 disabled={!item.unit_in_stock}
                 icon="pi pi-cart-plus"
                 className="p-button-rounded p-button-success"
+                onClick={handleAddCart}
               />
             </div>
           </Tippy>
