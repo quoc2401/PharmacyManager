@@ -4,7 +4,9 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import {
   createMedicineApi,
+  deleteMedicineApi,
   getMedicinesApi,
+  patchDeleteMedicineApi,
   updateMedicineApi
 } from '../../api/medicineApi'
 import { getCategoriesApi } from '../../api/categoryApi'
@@ -14,17 +16,15 @@ import {
   checkBoxEditor,
   imageSelector,
   textAreaEditor,
-  categorySelector,
-  roleSelector
+  categorySelector
 } from '../../components/Editors'
-import { formatDate, prependArray } from '../../shared/utils'
+import { isBool, prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
 import { MedicineField } from '../../shared/constant'
 import { Toolbar } from 'primereact/toolbar'
 import { Dialog } from 'primereact/dialog'
 import { toast } from 'react-toastify'
 import { Button } from 'primereact/button'
-import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
 import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
@@ -36,6 +36,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Checkbox } from 'primereact/checkbox'
 import { FileUpload } from 'primereact/fileupload'
+import { TriStateCheckbox } from 'primereact/tristatecheckbox'
 
 const emptyMedicine: Medicine = {
   id: 0,
@@ -57,7 +58,6 @@ const ManageMedicine: FC = () => {
   const [loading, setLoading] = useState(false)
   const [medicines, setMedicines] = useState<Medicine[]>([])
   const [totalRecords, setTotalRecords] = useState(0)
-  const [editingRows, setEditingRows] = useState([])
   const [medicine, setMedicine] = useState<Medicine>(emptyMedicine)
   const [newDialog, setNewDialog] = useState(false)
   const [deleteDialog, setDeleteDialog] = useState(false)
@@ -69,7 +69,8 @@ const ManageMedicine: FC = () => {
     describe: { value: '', matchMode: FilterMatchMode.CONTAINS },
     uses: { value: '', matchMode: FilterMatchMode.CONTAINS },
     trademark: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    category_id: { value: '', matchMode: FilterMatchMode.EQUALS }
+    category_id: { value: '', matchMode: FilterMatchMode.EQUALS },
+    discontinued: { value: null, matchMode: FilterMatchMode.EQUALS}
   })
 
   const tempUrl = useRef<string>()
@@ -183,25 +184,27 @@ const ManageMedicine: FC = () => {
   }
 
   //delete
-  //   const deleteSelectedUsers = async () => {
-  //     setLoading(true)
-  //     try {
-  //       if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
-  //       else await deleteUsers(selectedUsers)
+    const deleteSelectedMedicines = async () => {
+      setLoading(true)
+      try {
+        if (selectedMedicines.length == 1) await deleteMedicineApi(selectedMedicines[0].id)
+        else await patchDeleteMedicineApi(selectedMedicines)
 
-  //       const _users = users.filter(val => !selectedUsers.includes(val))
+        const _medicines = medicines.filter(val => !selectedMedicines.includes(val))
 
-  //       setSelectedUsers([])
-  //       setUsers(_users)
-  //       setDeleteDialog(false)
-  //       toast.success('delete success')
+        setSelectedMedicines([])
+        setMedicines(_medicines)
+        setDeleteDialog(false)
+        toast.success('delete success')
+      } catch (error) {
+        console.log(error)
+        toast.error('delete failed')
+      }
+      setLoading(false)
+    }
 
-  //       loadUsers()
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
 
+  //filters
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value
     const _filters = { ...filters }
@@ -216,7 +219,7 @@ const ManageMedicine: FC = () => {
     setGlobalFilterValue(value)
   }
 
-  const handleFilter = (field: MedicineField, value: string) => {
+  const handleFilter = (field: MedicineField, value: any) => {
     if (lazyTimeOut != null) {
       clearTimeout(lazyTimeOut)
     }
@@ -231,12 +234,43 @@ const ManageMedicine: FC = () => {
     setFilters(_filters)
   }
 
-  const onPage = (event: any) => {
-    setLazyParams(event)
+  const customCategoryFilter = (field: MedicineField) => {
+    return (
+      <Dropdown
+        optionLabel="name"
+        optionValue="id"
+        value={filters[field].value}
+        options={categories}
+        placeholder="Search by category"
+        className="rounded-md"
+        onChange={e => handleFilter(field, e.target.value)}
+      />
+    )
   }
 
-  const onRowEditChange = (e: any) => {
-    setEditingRows(e.data)
+  const customDiscontinuedFilter = (field: MedicineField) => {
+    return (
+      <TriStateCheckbox
+        value={
+          filters.discontinued.value !== null ? Boolean(filters.discontinued.value) : null
+        }
+        placeholder="Search by category"
+        className="rounded-md"
+        onChange={e => {
+          setFilters(prev => {
+            const _filters = {...prev}
+            const value = e.value
+            _filters['discontinued'].value = (value === null || value === undefined) ? null : +value as any
+            return _filters
+          })
+        }}
+        
+      />
+    )
+  }
+
+  const onPage = (event: any) => {
+    setLazyParams(event)
   }
 
   const onCellEditComplete = (e: any) => {
@@ -287,7 +321,7 @@ const ManageMedicine: FC = () => {
   const clearFilter = (field: MedicineField) => {
     setFilters(prev => {
       const _filters = { ...prev }
-      _filters[field].value = ''
+      _filters[field].value = null
 
       return _filters
     })
@@ -330,37 +364,6 @@ const ManageMedicine: FC = () => {
     )
   }
 
-  const deleteDialogFooter = (
-    yesAction: MouseEventHandler,
-    noAction: MouseEventHandler
-  ) => {
-    return (
-      <>
-        <Button
-          label="Yes"
-          icon="pi pi-check"
-          className="rounded-md mr-2"
-          onClick={yesAction}
-        />
-        <Button
-          label="No"
-          icon="pi pi-times"
-          className="p-button-danger rounded-md mr-2"
-          onClick={noAction}
-        />
-      </>
-    )
-  }
-
-  const handleInput = (field: MedicineField, value: string) => {
-    setMedicine(prev => {
-      const _medicine = { ...prev }
-      _medicine[field] = value
-
-      return _medicine
-    })
-  }
-
   const renderHeader = () => {
     return (
       <div className="flex justify-between items-center">
@@ -398,9 +401,6 @@ const ManageMedicine: FC = () => {
           first={lazyParams.first}
           editMode="cell"
           selectOnEdit={false}
-          // editingRows={editingRows}
-          // onRowEditChange={onRowEditChange}
-          //   onRowEditComplete={onRowEditComplete}
           rowHover
           emptyMessage="No medicine found!"
           globalFilterFields={['username', 'first_name']}
@@ -437,21 +437,19 @@ const ManageMedicine: FC = () => {
               categories.find(c => c.id === rowData.category_id)?.name
             }
             header="Category"
-            className="min-w-[20rem]"
+            className="min-w-[16rem]"
             editor={options => categorySelector(options, categories)}
             cellEditValidator={e => {
-              if (e.originalEvent.target.nodeName == 'LI') return false
+              if (e.originalEvent.target['nodename'] == 'LI') return false
               return true
             }}
             onCellEditComplete={onCellEditComplete}
-            // filter
-            // showFilterMenu={false}
-            // filterElement={customFilter(
-            //     MedicineField.CATEGORY,
-            //   'Search by First Name...'
-            // )}
-            // onFilterClear={() => clearFilter(MedicineField.CATEGORY)}
-            align="center"
+            filter
+            showFilterMenu={false}
+            filterElement={customCategoryFilter(
+                MedicineField.CATEGORY
+            )}
+            onFilterClear={() => clearFilter(MedicineField.CATEGORY)}
           />
           <Column
             field="unit_price"
@@ -471,7 +469,7 @@ const ManageMedicine: FC = () => {
           />
           <Column
             field="describe"
-            header="Quantity per unit"
+            header="Describe"
             className="min-w-[12rem]"
             editor={options => textEditor(options)}
             onCellEditComplete={onCellEditComplete}
@@ -479,9 +477,16 @@ const ManageMedicine: FC = () => {
           <Column
             field="uses"
             header="Uses"
-            className="min-w-[26rem]"
+            className="min-w-[30rem]"
             editor={options => textAreaEditor(options)}
             onCellEditComplete={onCellEditComplete}
+            filter
+            showFilterMenu={false}
+            filterElement={customFilter(
+              MedicineField.USES,
+              'Search by uses...'
+            )}
+            onFilterClear={() => clearFilter(MedicineField.USES)}
           />
           <Column
             field="trademark"
@@ -489,11 +494,18 @@ const ManageMedicine: FC = () => {
             className="min-w-[10rem]"
             editor={options => textEditor(options)}
             onCellEditComplete={onCellEditComplete}
+            filter
+            showFilterMenu={false}
+            filterElement={customFilter(
+              MedicineField.TRADEMARK,
+              'Search by trademark...'
+            )}
+            onFilterClear={() => clearFilter(MedicineField.TRADEMARK)}
           />
           <Column
             field="image"
             header="Image"
-            className="min-w-[12rem]"
+            className="min-w-[6rem]"
             editor={options => imageSelector(options)}
             onCellEditComplete={onCellEditComplete}
             body={imageBodyTemplate}
@@ -505,10 +517,15 @@ const ManageMedicine: FC = () => {
             body={discontinuedBodyTemplate}
             editor={options => checkBoxEditor(options)}
             onCellEditComplete={onCellEditComplete}
+            filter
+            showFilterMenu={false}
+            filterElement={customDiscontinuedFilter(MedicineField.DISCONTINUED)}
+            onFilterClear={() => clearFilter(MedicineField.DISCONTINUED)}
             align="center"
           />
         </DataTable>
       </div>
+      
       <Dialog
         visible={newDialog}
         header="New Medicine"
@@ -643,7 +660,7 @@ const ManageMedicine: FC = () => {
         style={{ width: '450px' }}
         header="Confirm"
         modal
-        // footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)}
+        footer={deleteDialogFooter(deleteSelectedMedicines, hideDeleteDialog)}
         onHide={hideDeleteDialog}
       >
         <div className="confirmation-content">

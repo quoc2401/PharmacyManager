@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Medicine;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MedicineRepository implements IRepository
@@ -16,21 +17,21 @@ class MedicineRepository implements IRepository
 
   public function get($params)
   {
-
-    // $medicines = $this->medicines->where(function($query) use($params){
-    //   if(isset($params['category_id']))
-    //     $query->where('category_id', '=', $params['category_id']);
-
-    // });
-
     $medicines = $this->medicines->where(function ($query) use ($params) {
       if (array_key_exists('category_id', $params) && isset($params['category_id']) && $params['category_id'] !== '0')
         $query->where('category_id', '=', $params['category_id']);
 
       $query->where(function($query) use ($params) {
         foreach ($params as $key => $value) {
-          if ($key !== 'page' && $key !== 'category_id' && !empty($value))
+          if ($key !== 'page' && $key !== 'category_id' && isset($value) && $value !== 'null') {
+            Log::info($key." - ".$value);
+            if($key === 'discontinued') {
+              $query->where($key, '=', $value);
+              continue;
+            }
+
             $query->orWhere($key, 'LIKE', '%' . $value . '%');
+          }
         }
       });
       
@@ -73,5 +74,14 @@ class MedicineRepository implements IRepository
     $medicines->delete();
 
     return true;
+  }
+
+  public function patchDelete($medicines) {
+    DB::transaction(function() use($medicines) {
+      foreach($medicines as $m)
+        $this->medicines->delete($m['id']);
+      
+      return true;
+    });
   }
 }

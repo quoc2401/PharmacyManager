@@ -50,7 +50,7 @@ Route::get('/medicines/{id}', [MedicineController::class, 'show']);
 Route::post('/medicines', [MedicineController::class, 'store']);
 Route::put('/medicines/{id}', [MedicineController::class, 'update']);
 Route::delete('/medicines/{id}', [MedicineController::class, 'destroy']);
-
+Route::patch('/medicines/delete', [MedicineController::class, 'patchDelete']);
 
 //Category api routes
 Route::get('/categories', [CategoryController::class, 'index']);

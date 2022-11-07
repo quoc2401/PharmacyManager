@@ -80,8 +80,8 @@ export const textAreaEditor = (options: any) => {
 
 export const imageSelector = (options: any) => {
   // const url = URL.createObjectURL()
-  return (<div className='flex space-x-2'>
-    <img src={options.value} alt="image" width="36rem"/>
+  return (<div className='flex space-x-2 w-48'>
+    <img src={options.value} alt="image" className='max-w-[4rem]'/>
     <FileUpload
       id="image_file"
       name="image_file"

@@ -9,7 +9,6 @@ export const getMedicinesApi = (page: number | null, params: any) => {
         )
         .join('&')
     : ''
-
   return axiosClient.get(`/medicines?page=${page}&${queryParams}`)
 }
 
@@ -26,5 +25,9 @@ export const updateMedicineApi = (formData: FormData) => {
 }
 
 export const deleteMedicineApi = (id: number) => {
-  return axiosClient.post(`/medicines/${id}`)
+  return axiosClient.delete(`/medicines/${id}`)
+}
+
+export const patchDeleteMedicineApi = (medicines: Medicine[]) => {
+  return axiosClient.patch(`/medicines/delete`, medicines)
 }

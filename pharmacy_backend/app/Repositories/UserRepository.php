@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements IRepository
 {
@@ -62,11 +63,13 @@ class UserRepository implements IRepository
     }
 
     public function patchDelete($users)
-    {
-        foreach ($users as $u) {
-            $this->users->destroy($u["id"]);
-        }
-
-        return true;
+    {   
+        DB::transaction(function() use($users) {
+            foreach ($users as $u) {
+                $this->users->destroy($u["id"]);
+            }
+    
+            return true;
+        });
     }
 }

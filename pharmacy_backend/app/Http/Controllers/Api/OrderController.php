@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\OrderDetail;
 use App\Services\OrderDetailService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
@@ -43,24 +41,8 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $order = Order::create([
-            'user_id' => $request->user_id,
-            'order_date' => now(),
-        ]);
-
-        foreach ($request->order_details as $detail) {
-            foreach ($detail as $d) {
-                $orderDetail = OrderDetail::create([
-                    'order_id' => $order->id,
-                    'medicine_id' => $d->medicine->id,
-                    'unit_price' => $d->medicine->unit_price,
-                    'quantity' => $d->quantity,
-                    'discount' => 0,
-                ]);
-            }
-        }
-
-        return $this->UpdateSuccessResponse($order, "Tạo đơn hàng thành công");
+        $res = $this->orderService->create($request);
+        return $this->UpdateSuccessResponse($res, "Tạo đơn hàng thành công");
     }
 
     /**

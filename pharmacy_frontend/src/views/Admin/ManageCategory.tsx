@@ -9,7 +9,7 @@ import {
   deleteUser,
   deleteUsers
 } from '../../api/userApi'
-import { User } from '../../shared/types'
+import { Category, User } from '../../shared/types'
 import { textEditor, dateEditor, roleSelector } from '../../components/Editors'
 import { formatDate, prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
@@ -21,31 +21,24 @@ import { Button } from 'primereact/button'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
-import { deleteDialogFooter, newDialogFooter } from '../../shared/DialogFooters'
+import { newDialogFooter } from '../../shared/DialogFooters'
 import { roleBodyTemplate, roleItemTemplate } from '../../shared/templates'
 
-const emptyUser = {
+const emptyCategory = {
   id: 0,
-  username: '',
-  password: '',
-  first_name: '',
-  last_name: '',
-  birth_date: null,
-  phone: '',
-  user_role: 'EMPLOYEE',
-  created_at: '',
-  updated_at: ''
+  name: '',
+  description: ''
 }
 
-const ManageUser: FC = () => {
+const ManageCategory: FC = () => {
   const [loading, setLoading] = useState(false)
-  const [users, setUsers] = useState<User[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [totalRecords, setTotalRecords] = useState(0)
   const [editingRows, setEditingRows] = useState([])
-  const [user, setUser] = useState<User>(emptyUser)
+  const [category, setCategory] = useState<Category>(emptyCategory)
   const [newDialog, setNewDialog] = useState(false)
   const [deleteDialog, setDeleteDialog] = useState(false)
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [filters, setFilters] = useState({
     username: { value: '', matchMode: FilterMatchMode.CONTAINS },
@@ -64,87 +57,87 @@ const ManageUser: FC = () => {
   })
 
   useEffect(() => {
-    loadUsers()
+    // loadUsers()
   }, [lazyParams, filters])
 
   //functions
-  const loadUsers = () => {
-    lazyTimeOut.current = setTimeout(async () => {
-      setLoading(true)
-      try {
-        const res = await getUsers(filters, lazyParams.page + 1)
+//   const loadUsers = () => {
+//     lazyTimeOut.current = setTimeout(async () => {
+//       setLoading(true)
+//       try {
+//         const res = await getUsers(filters, lazyParams.page + 1)
 
-        setUsers(res.data.data)
-        setTotalRecords(res.data.meta.total)
-      } catch (e) {
-        console.log(e)
-      }
+//         setUsers(res.data.data)
+//         setTotalRecords(res.data.meta.total)
+//       } catch (e) {
+//         console.log(e)
+//       }
 
-      setLoading(false)
-    }, 1000)
+//       setLoading(false)
+//     }, 1000)
 
-    return () => clearTimeout(lazyTimeOut.current)
-  }
+//     return () => clearTimeout(lazyTimeOut.current)
+//   }
 
   //create
-  const saveUser = async () => {
-    setLoading(true)
-    try {
-      const res = await createUser(user)
-      const data = res.data.data
-      setUsers(prev => {
-        prev = prependArray(data, prev)
+//   const saveUser = async () => {
+//     setLoading(true)
+//     try {
+//       const res = await createUser(user)
+//       const data = res.data.data
+//       setUsers(prev => {
+//         prev = prependArray(data, prev)
 
-        return prev
-      })
-      toast.success('Create success')
-    } catch (error) {
-      console.log(error)
-    }
-    setLoading(false)
-    setNewDialog(false)
-  }
+//         return prev
+//       })
+//       toast.success('Create success')
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     setLoading(false)
+//     setNewDialog(false)
+//   }
 
   //update
-  const onRowEditComplete = async (e: any) => {
-    setLoading(true)
-    const _users = [...users]
-    const { newData, index } = e
+//   const onRowEditComplete = async (e: any) => {
+//     setLoading(true)
+//     const _users = [...users]
+//     const { newData, index } = e
 
-    newData.birth_date = formatDate(newData.birth_date)
+//     newData.birth_date = formatDate(newData.birth_date)
 
-    _users[index] = newData
-    try {
-      const res = await updateUser(newData)
+//     _users[index] = newData
+//     try {
+//       const res = await updateUser(newData)
 
-      console.log(res)
+//       console.log(res)
 
-      if (res.status == 200) setUsers(_users)
-    } catch (error) {
-      console.log(error)
-    }
-    setLoading(false)
-  }
+//       if (res.status == 200) setUsers(_users)
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     setLoading(false)
+//   }
 
   //delete
-  const deleteSelectedUsers = async () => {
-    setLoading(true)
-    try {
-      if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
-      else await deleteUsers(selectedUsers)
+//   const deleteSelectedUsers = async () => {
+//     setLoading(true)
+//     try {
+//       if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
+//       else await deleteUsers(selectedUsers)
 
-      const _users = users.filter(val => !selectedUsers.includes(val))
+//       const _users = users.filter(val => !selectedUsers.includes(val))
 
-      setSelectedUsers([])
-      setUsers(_users)
-      setDeleteDialog(false)
-      toast.success('delete success')
-    } catch (error) {
-      console.log(error)
-      toast.error('delete failed')
-    }
-    setLoading(false)
-  }
+//       setSelectedUsers([])
+//       setUsers(_users)
+//       setDeleteDialog(false)
+//       toast.success('delete success')
+
+//       loadUsers()
+//     } catch (error) {
+//       console.log(error)
+//     }
+//   }
 
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value
@@ -223,7 +216,7 @@ const ManageUser: FC = () => {
   }
 
   const openNew = () => {
-    setUser(emptyUser)
+    setCategory(emptyCategory)
     setNewDialog(true)
   }
 
@@ -253,16 +246,38 @@ const ManageUser: FC = () => {
           icon="pi pi-trash"
           className="p-button-danger rounded-md mr-2"
           onClick={confirmDeleteSelected}
-          disabled={!selectedUsers || !selectedUsers.length}
+          disabled={!selectedCategories || !selectedCategories.length}
+        />
+      </>
+    )
+  }
+
+  const deleteDialogFooter = (
+    yesAction: MouseEventHandler,
+    noAction: MouseEventHandler
+  ) => {
+    return (
+      <>
+        <Button
+          label="Yes"
+          icon="pi pi-check"
+          className="rounded-md mr-2"
+          onClick={yesAction}
+        />
+        <Button
+          label="No"
+          icon="pi pi-times"
+          className="p-button-danger rounded-md mr-2"
+          onClick={noAction}
         />
       </>
     )
   }
 
   const handleInput = (value: string, field: UserField) => {
-    const _user = { ...user }
-    _user[field] = value
-    setUser(_user)
+    const _category = { ...category }
+    _category[field] = value
+    setCategory(_category)
   }
 
   const renderHeader = () => {
@@ -290,7 +305,7 @@ const ManageUser: FC = () => {
         <DataTable
           className=""
           header={renderHeader()}
-          value={users}
+          value={categories}
           paginator
           rows={10}
           loading={loading}
@@ -303,15 +318,15 @@ const ManageUser: FC = () => {
           editMode="row"
           editingRows={editingRows}
           onRowEditChange={onRowEditChange}
-          onRowEditComplete={onRowEditComplete}
+        //   onRowEditComplete={onRowEditComplete}
           rowHover
           emptyMessage="No user found!"
           globalFilterFields={['username', 'fisrt_name']}
           globalFilter={globalFilterValue}
           filterDisplay="row"
           filters={filters}
-          selection={selectedUsers}
-          onSelectionChange={e => setSelectedUsers(e.value)}
+          selection={selectedCategories}
+          onSelectionChange={e => setSelectedCategories(e.value)}
         >
           <Column
             selectionMode="multiple"
@@ -401,7 +416,7 @@ const ManageUser: FC = () => {
         header="New User"
         modal
         className="p-fluid w-[40%]"
-        footer={newDialogFooter(saveUser, hideNewDialog)}
+        // footer={newDialogFooter(saveUser, hideNewDialog)}
         onHide={hideNewDialog}
       >
         <div className="field mb-5">
@@ -409,7 +424,7 @@ const ManageUser: FC = () => {
           <InputText
             id="username"
             name="username"
-            value={user.username}
+            value={category.name}
             required
             autoFocus
             placeholder="Enter username..."
@@ -422,75 +437,11 @@ const ManageUser: FC = () => {
           <InputText
             id="password"
             name="password"
-            value={user.password}
+            value={category.description}
             required
             placeholder="Enter password..."
             className="rounded-md"
             onChange={e => handleInput(e.target.value, UserField.PASSWORD)}
-          />
-        </div>
-        <div className="flex mb-5 space-x-2">
-          <div className="field">
-            <label htmlFor="first_name">First Name</label>
-            <InputText
-              id="first_name"
-              name="first_name"
-              value={user.first_name}
-              required
-              placeholder="Enter First Name..."
-              className="rounded-md"
-              onChange={e => handleInput(e.target.value, UserField.FIRST_NAME)}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="last_name">Last Name</label>
-            <InputText
-              id="last_name"
-              name="last_name"
-              value={user.last_name}
-              required
-              placeholder="Enter Last Name..."
-              className="rounded-md"
-              onChange={e => handleInput(e.target.value, UserField.LAST_NAME)}
-            />
-          </div>
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="birth_date">Birth Date</label>
-          <Calendar
-            id="birth_date"
-            name="birth_date"
-            value={new Date(Date.parse(user.birth_date || ''))}
-            showIcon
-            dateFormat="yy-mm-dd"
-            placeholder="Choose Birth Date..."
-            onChange={e =>
-              handleInput(formatDate(e.target.value), UserField.BIRTH_DATE)
-            }
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="phone">Phone</label>
-          <InputText
-            id="phone"
-            name="phone"
-            value={user.phone || ''}
-            required
-            placeholder="Enter Phone number..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.PHONE)}
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="user_role">User Role</label>
-          <Dropdown
-            id="user_role"
-            name="user_role"
-            value={user.user_role}
-            options={roles}
-            optionLabel="name"
-            optionValue="code"
-            onChange={e => handleInput(e.target.value, UserField.USER_ROLE)}
           />
         </div>
       </Dialog>
@@ -500,7 +451,7 @@ const ManageUser: FC = () => {
         style={{ width: '450px' }}
         header="Confirm"
         modal
-        footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)}
+        // footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)}
         onHide={hideDeleteDialog}
       >
         <div className="confirmation-content">
@@ -508,13 +459,11 @@ const ManageUser: FC = () => {
             className="pi pi-exclamation-triangle mr-3"
             style={{ fontSize: '2rem' }}
           />
-          {user && (
-            <span>Are you sure you want to delete the selected items?</span>
-          )}
+          {<span>Are you sure you want to delete the selected items?</span>}
         </div>
       </Dialog>
     </div>
   )
 }
 
-export default ManageUser
+export default ManageCategory
