@@ -2,30 +2,22 @@ import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import {
-  getUsers,
-  updateUser,
-  createUser,
-  deleteUser,
-  deleteUsers
-} from '../../api/userApi'
 import { Category, User } from '../../shared/types'
-import { textEditor, dateEditor, roleSelector } from '../../components/Editors'
-import { formatDate, prependArray } from '../../shared/utils'
+import { textEditor} from '../../components/Editors'
+import { prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
-import { UserField, roles } from '../../shared/constant'
+import { CategoryField } from '../../shared/constant'
 import { Toolbar } from 'primereact/toolbar'
 import { Dialog } from 'primereact/dialog'
 import { toast } from 'react-toastify'
 import { Button } from 'primereact/button'
-import { Calendar } from 'primereact/calendar'
-import { Dropdown } from 'primereact/dropdown'
 import { FilterMatchMode } from 'primereact/api'
-import { newDialogFooter } from '../../shared/DialogFooters'
-import { roleBodyTemplate, roleItemTemplate } from '../../shared/templates'
+import { newDialogFooter, deleteDialogFooter } from '../../shared/DialogFooters'
+import { createCategoryApi, deleteCategoriesApi, deleteCategoryApi, getCategoriesApi, updateCategoryApi } from '../../api/categoryApi'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 const emptyCategory = {
-  id: 0,
   name: '',
   description: ''
 }
@@ -41,11 +33,8 @@ const ManageCategory: FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [filters, setFilters] = useState({
-    username: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    first_name: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    last_name: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    phone: { value: '', matchMode: FilterMatchMode.CONTAINS },
-    user_role: { value: '', matchMode: FilterMatchMode.EQUALS }
+    name: { value: '', matchMode: FilterMatchMode.CONTAINS },
+    description: { value: '', matchMode: FilterMatchMode.CONTAINS }
   })
 
   const lazyTimeOut = useRef<ReturnType<typeof setTimeout>>()
@@ -57,110 +46,115 @@ const ManageCategory: FC = () => {
   })
 
   useEffect(() => {
-    // loadUsers()
+    lazyTimeOut.current = setTimeout(async () => {
+      loadCategories()
+    }, 1000)
+    return () => clearTimeout(lazyTimeOut.current)
   }, [lazyParams, filters])
 
-  //functions
-//   const loadUsers = () => {
-//     lazyTimeOut.current = setTimeout(async () => {
-//       setLoading(true)
-//       try {
-//         const res = await getUsers(filters, lazyParams.page + 1)
+  // functions
+  const loadCategories = async () => {
+    setLoading(true)
+      try {
+        const res = await getCategoriesApi(lazyParams.page + 1, filters)
 
-//         setUsers(res.data.data)
-//         setTotalRecords(res.data.meta.total)
-//       } catch (e) {
-//         console.log(e)
-//       }
+        setCategories(res.data.data)
+        setTotalRecords(res.data.meta.total)
+      } catch (e) {
+        console.log(e)
+      }
 
-//       setLoading(false)
-//     }, 1000)
+      setLoading(false)
+  }
+  const formik = useFormik<Category>({
+    initialValues: {
+      name: '',
+      description: ''
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required(),
+      description: Yup.string().required()
+    }),
+    onSubmit: async (value) => {
+      setLoading(true)
+      try {
+        const res = await createCategoryApi(value)
+        const data = res.data.data
 
-//     return () => clearTimeout(lazyTimeOut.current)
-//   }
+        if(res.status === 200) {
+          toast.success("create success")
+          setCategories(prev => {
+            prev = prependArray(data, prev)
+            return prev
+          })
+          formik.setValues(emptyCategory)
+          setNewDialog(false)
+        }
+      } catch (error) {
+        toast.error("failed to create")
+        console.log(error)
+      }
+      setLoading(false)
+    }
+  })
 
-  //create
-//   const saveUser = async () => {
-//     setLoading(true)
-//     try {
-//       const res = await createUser(user)
-//       const data = res.data.data
-//       setUsers(prev => {
-//         prev = prependArray(data, prev)
+  // update
+  const onRowEditComplete = async (e: any) => {
+    setLoading(true)
+    const _categories = [...categories]
+    const { newData, index } = e
 
-//         return prev
-//       })
-//       toast.success('Create success')
-//     } catch (error) {
-//       console.log(error)
-//     }
-//     setLoading(false)
-//     setNewDialog(false)
-//   }
+    _categories[index] = newData
+    
+    setCategories(_categories)
+    try {
+      const res = await updateCategoryApi(newData)
 
-  //update
-//   const onRowEditComplete = async (e: any) => {
-//     setLoading(true)
-//     const _users = [...users]
-//     const { newData, index } = e
+      console.log(res)
 
-//     newData.birth_date = formatDate(newData.birth_date)
-
-//     _users[index] = newData
-//     try {
-//       const res = await updateUser(newData)
-
-//       console.log(res)
-
-//       if (res.status == 200) setUsers(_users)
-//     } catch (error) {
-//       console.log(error)
-//     }
-//     setLoading(false)
-//   }
+      if (res.status == 200)
+        toast.success("update success")
+    } catch (error) {
+      console.log(error)
+      setCategories(categories)
+      toast.error("failed to update")
+    }
+    setLoading(false)
+  }
 
   //delete
-//   const deleteSelectedUsers = async () => {
-//     setLoading(true)
-//     try {
-//       if (selectedUsers.length == 1) await deleteUser(selectedUsers[0])
-//       else await deleteUsers(selectedUsers)
+  const deleteSelectedCategories = async () => {
+    setLoading(true)
+    try {
+      if (selectedCategories.length == 1) await deleteCategoryApi(selectedCategories[0].id)
+      else await deleteCategoriesApi(selectedCategories)
 
-//       const _users = users.filter(val => !selectedUsers.includes(val))
+      const _categories = categories.filter(val => !selectedCategories.includes(val))
 
-//       setSelectedUsers([])
-//       setUsers(_users)
-//       setDeleteDialog(false)
-//       toast.success('delete success')
-
-//       loadUsers()
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
+      setSelectedCategories([])
+      setCategories(_categories)
+      setDeleteDialog(false)
+      toast.success('delete success')
+    } catch (error) {
+      toast.error('failed to delete')
+      console.log(error)
+    }
+    setLoading(false)
+  }
 
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value
     const _filters = { ...filters }
-    // _filters['global'].value = value;
 
-    if (isNaN(value)) {
-      filters['username'].value = value
-      filters['last_name'].value = value
-      filters['first_name'].value = value
-      filters['phone'].value = ''
-    } else {
-      filters['username'].value = value
-      filters['last_name'].value = ''
-      filters['first_name'].value = ''
-      filters['phone'].value = value
-    }
+    filters.name.value = value
+    filters.description.value = value
+    
 
     setFilters(_filters)
     setGlobalFilterValue(value)
   }
 
-  const handleFilter = (field: UserField, value: string) => {
+  const handleFilter = (field: CategoryField, value: string) => {
     const _filters = { ...filters }
     _filters[field].value = value
 
@@ -180,7 +174,7 @@ const ManageCategory: FC = () => {
     setEditingRows(e.data)
   }
 
-  const customFilter = (field: UserField, placeholder: string) => {
+  const customFilter = (field: CategoryField, placeholder: string) => {
     return (
       <InputText
         value={filters[field].value}
@@ -191,22 +185,7 @@ const ManageCategory: FC = () => {
     )
   }
 
-  const customRoleFilter = (field: UserField) => {
-    return (
-      <Dropdown
-        optionLabel="name"
-        optionValue="code"
-        value={filters[field].value}
-        options={roles}
-        itemTemplate={roleItemTemplate}
-        placeholder="Search by role"
-        className="rounded-md"
-        onChange={e => handleFilter(field, e.target.value)}
-      />
-    )
-  }
-
-  const clearFilter = (field: UserField) => {
+  const clearFilter = (field: CategoryField) => {
     setFilters(prev => {
       const _filters = { ...prev }
       _filters[field].value = ''
@@ -274,7 +253,7 @@ const ManageCategory: FC = () => {
     )
   }
 
-  const handleInput = (value: string, field: UserField) => {
+  const handleInput = (value: string, field: CategoryField) => {
     const _category = { ...category }
     _category[field] = value
     setCategory(_category)
@@ -318,10 +297,10 @@ const ManageCategory: FC = () => {
           editMode="row"
           editingRows={editingRows}
           onRowEditChange={onRowEditChange}
-        //   onRowEditComplete={onRowEditComplete}
+          onRowEditComplete={onRowEditComplete}
           rowHover
-          emptyMessage="No user found!"
-          globalFilterFields={['username', 'fisrt_name']}
+          emptyMessage="No categories found!"
+          globalFilterFields={['name', 'description']}
           globalFilter={globalFilterValue}
           filterDisplay="row"
           filters={filters}
@@ -335,74 +314,30 @@ const ManageCategory: FC = () => {
           ></Column>
           <Column field="id" header="Id" className="min-w-[3rem]" />
           <Column
-            field="username"
-            header="Username"
+            field="name"
+            header="Name"
+            className="min-w-[20rem] whitespace-nowrap"
+            editor={options => textEditor(options)}
+            filter
+            showFilterMenu={false}
+            filterElement={customFilter(
+              CategoryField.NAME,
+              'Search by name...'
+            )}
+            onFilterClear={() => clearFilter(CategoryField.NAME)}
+          />
+          <Column
+            field="description"
+            header="Description"
             className="min-w-[14rem]"
             editor={options => textEditor(options)}
             filter
             showFilterMenu={false}
             filterElement={customFilter(
-              UserField.USERNAME,
-              'Search by Username...'
+              CategoryField.DESCRIPTION,
+              'Search by description...'
             )}
-            onFilterClear={() => clearFilter(UserField.USERNAME)}
-          />
-          <Column
-            field="first_name"
-            header="First Name"
-            className="min-w-[14rem]"
-            editor={options => textEditor(options)}
-            filter
-            showFilterMenu={false}
-            filterElement={customFilter(
-              UserField.FIRST_NAME,
-              'Search by First Name...'
-            )}
-            onFilterClear={() => clearFilter(UserField.FIRST_NAME)}
-          />
-          <Column
-            field="last_name"
-            header="Last Name"
-            className="min-w-[14rem]"
-            editor={options => textEditor(options)}
-            filter
-            showFilterMenu={false}
-            filterElement={customFilter(
-              UserField.LAST_NAME,
-              'Search by Last Name...'
-            )}
-            onFilterClear={() => clearFilter(UserField.LAST_NAME)}
-          />
-          <Column
-            field="birth_date"
-            header="Birth Date"
-            className="min-w-[8rem]"
-            editor={options => dateEditor(options)}
-          />
-          <Column
-            field="phone"
-            header="Phone"
-            className="min-w-[12rem]"
-            editor={options => textEditor(options)}
-            filter
-            showFilterMenu={false}
-            filterType="number"
-            filterElement={customFilter(
-              UserField.PHONE,
-              'Search by Phone Number...'
-            )}
-            onFilterClear={() => clearFilter(UserField.PHONE)}
-          />
-          <Column
-            field="user_role"
-            header="Role"
-            className="min-w-[8rem]"
-            editor={options => roleSelector(options)}
-            body={roleBodyTemplate}
-            filter
-            filterElement={customRoleFilter(UserField.USER_ROLE)}
-            onFilterClear={() => clearFilter(UserField.USER_ROLE)}
-            showFilterMenu={false}
+            onFilterClear={() => clearFilter(CategoryField.DESCRIPTION)}
           />
           <Column
             rowEditor
@@ -416,34 +351,36 @@ const ManageCategory: FC = () => {
         header="New User"
         modal
         className="p-fluid w-[40%]"
-        // footer={newDialogFooter(saveUser, hideNewDialog)}
+        footer={newDialogFooter(() => formik.submitForm(), hideNewDialog)}
         onHide={hideNewDialog}
       >
-        <div className="field mb-5">
-          <label htmlFor="username">Username</label>
-          <InputText
-            id="username"
-            name="username"
-            value={category.name}
-            required
-            autoFocus
-            placeholder="Enter username..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.USERNAME)}
-          />
-        </div>
-        <div className="field mb-5">
-          <label htmlFor="password">Password</label>
-          <InputText
-            id="password"
-            name="password"
-            value={category.description}
-            required
-            placeholder="Enter password..."
-            className="rounded-md"
-            onChange={e => handleInput(e.target.value, UserField.PASSWORD)}
-          />
-        </div>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="field mb-5">
+            <label htmlFor="name">Name</label>
+            <InputText
+              id="name"
+              name="name"
+              value={formik.values.name}
+              required
+              autoFocus
+              placeholder="Enter name..."
+              className="rounded-md"
+              onChange={formik.handleChange}
+            />
+          </div>
+          <div className="field mb-5">
+            <label htmlFor="description">Description</label>
+            <InputText
+              id="description"
+              name="description"
+              value={formik.values.description}
+              required
+              placeholder="Enter description..."
+              className="rounded-md"
+              onChange={formik.handleChange}
+            />
+          </div>
+        </form>
       </Dialog>
 
       <Dialog
@@ -451,7 +388,7 @@ const ManageCategory: FC = () => {
         style={{ width: '450px' }}
         header="Confirm"
         modal
-        // footer={deleteDialogFooter(deleteSelectedUsers, hideDeleteDialog)}
+        footer={deleteDialogFooter(deleteSelectedCategories, hideDeleteDialog)}
         onHide={hideDeleteDialog}
       >
         <div className="confirmation-content">

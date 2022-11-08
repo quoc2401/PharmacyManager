@@ -36,7 +36,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $this->categoryService->create($request);
+
+        return $this->UpdateSuccessResponse($data);
     }
 
     /**
@@ -59,7 +61,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $this->categoryService->update($id, $request);
+
+        return $this->UpdateSuccessResponse($data);
     }
 
     /**
@@ -70,6 +74,12 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->categoryService->delete($id);
+        return $this->UpdateSuccessResponse("");
+    }
+
+    public function patchDelete(Request $request) {
+        $this->categoryService->patchDelete($request);
+        return $this->UpdateSuccessResponse("");
     }
 }

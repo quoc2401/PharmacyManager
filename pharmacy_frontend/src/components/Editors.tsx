@@ -8,14 +8,14 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { getCategoriesApi } from '../api/categoryApi'
 import { Category } from '../shared/types'
 
-export const textEditor = (options:any, type:any = "text", step:number = 1) => {
+export const textEditor = (options:any, type:string = "text", step:number = 1) => {
   return (
     <InputText
       type={type}
       value={options.value}
       step={step}
       onChange={e => options.editorCallback(e.target.value)}
-      className="w-[10rem]"
+      className="w-full"
     />
   )
 }

@@ -54,6 +54,10 @@ Route::patch('/medicines/delete', [MedicineController::class, 'patchDelete']);
 
 //Category api routes
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::post('/categories', [CategoryController::class, 'store']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+Route::patch('/categories/delete', [CategoryController::class, 'patchDelete']);
 
 //Order api routes
 Route::post('/order', [OrderController::class, 'store']);

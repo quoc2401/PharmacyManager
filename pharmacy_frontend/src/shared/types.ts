@@ -1,5 +1,5 @@
 export interface User {
-  id: number
+  id?: number
   username: string
   password: string
   first_name: string
@@ -12,13 +12,13 @@ export interface User {
 }
 
 export interface Medicine {
-  id: number
+  id?: number
   name: string
   category_id: number | string
   unit_price: number
   unit_in_stock: number | 0
-  discontinued: boolean | false
-  image: string
+  discontinued: number | false
+  image?: string
   describe: string
   uses: string
   trademark: string
@@ -26,7 +26,7 @@ export interface Medicine {
 }
 
 export interface Category {
-  id: number
+  id?: number
   name: string
   description: string
 }
