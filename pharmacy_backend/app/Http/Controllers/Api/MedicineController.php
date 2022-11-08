@@ -85,6 +85,8 @@ class MedicineController extends Controller
     }
 
     public function patchDelete(Request $request) {
-        
+        $this->medicineService->patchDelete($request);
+
+        return $this->UpdateSuccessResponse("");
     }
 }

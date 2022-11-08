@@ -41,14 +41,14 @@ import { TriStateCheckbox } from 'primereact/tristatecheckbox'
 const emptyMedicine: Medicine = {
   id: 0,
   name: '',
-  category_id: '',
-  unit_price: 0,
-  unit_in_stock: 0,
+  category_id: 1,
+  unit_price: 1000,
+  unit_in_stock: 10,
   describe: '',
   image: '',
   uses: '',
   trademark: '',
-  discontinued: false,
+  discontinued: 0,
   image_file: null
 }
 
@@ -114,27 +114,19 @@ const ManageMedicine: FC = () => {
     }
   }
 
-  const formik = useFormik({
+  const formik = useFormik<Medicine>({
     initialValues: {
-      name: '',
-      category_id: 1,
-      unit_price: 10000,
-      unit_in_stock: 10,
-      describe: '',
-      uses: '',
-      trademark: '',
-      discontinued: 0,
-      image_file: null
+      ...emptyMedicine
     },
     validationSchema: Yup.object({
       name: Yup.string().required(),
       category_id: Yup.number().required(),
-      image_file: Yup.object().required()
+      image_file: Yup.mixed().required()
     }),
     onSubmit: async value => {
       setLoading(true)
       try {
-        console.log(value)
+        console.log("asas")
         const formData = new FormData()
         Object.keys(value).map(k => {
           formData.append(k, value[k])
@@ -151,6 +143,7 @@ const ManageMedicine: FC = () => {
 
           toast.success('create success')
           setNewDialog(false)
+          formik.setValues(emptyMedicine)
         } else toast.error('failed to create')
       } catch (error) {
         console.log(error)
@@ -187,6 +180,7 @@ const ManageMedicine: FC = () => {
     const deleteSelectedMedicines = async () => {
       setLoading(true)
       try {
+        console.log(selectedMedicines)
         if (selectedMedicines.length == 1) await deleteMedicineApi(selectedMedicines[0].id)
         else await patchDeleteMedicineApi(selectedMedicines)
 
@@ -275,6 +269,9 @@ const ManageMedicine: FC = () => {
 
   const onCellEditComplete = (e: any) => {
     const { rowData, newValue, field, originalEvent: event } = e
+    if(rowData[field] == newValue)
+      return
+      
     switch (field) {
       case 'category_id':
         rowData[field] = newValue
@@ -381,7 +378,7 @@ const ManageMedicine: FC = () => {
     )
   }
 
-  useTitle(`Pharmacy - Manage User`)
+  useTitle(`Pharmacy - Manage Medicine`)
   return (
     <div className="grid-cols-12 max-w-full overflow-hidden">
       <div className="card">
@@ -537,6 +534,11 @@ const ManageMedicine: FC = () => {
         <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
           <div className="field mb-5">
             <label htmlFor="name">Name</label>
+            {formik.errors.name && (
+              <p className="text-xs text-red-500 ml-1">
+                {formik.errors.name}
+              </p>
+            )}
             <InputText
               id="name"
               name="name"

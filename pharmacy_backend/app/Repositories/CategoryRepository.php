@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Log;
 
 class CategoryRepository implements IRepository
 {
@@ -17,11 +18,11 @@ class CategoryRepository implements IRepository
     {
         $categories = $this->categories->where(function ($query) use ($param) {
             foreach ($param as $key => $value) {
-                if ($key !== 'page' && !empty($value))
+                if ($key !== 'page' && !empty($value)) {
                     $query->orWhere($key, 'LIKE', '%' . $value . '%');
+                }
             }
-        })
-            ->paginate(env('PAGE_SIZE'));
+        })->paginate(env('PAGE_SIZE'));
 
         return $categories;
     }
@@ -35,36 +36,33 @@ class CategoryRepository implements IRepository
 
     public function create($data)
     {
-        $user = new Category();
-        $user->fill($data);
-        $user->save();
+        $category = new Category();
+        $category->fill($data);
+        $category->save();
 
-        return $user;
+        return $category;
     }
 
     public function update($id, $data)
     {
-        $user = $this->users->find($id);
-        $user->update($data);
-        $user->save();
+        $category = $this->categories->find($id);
+        $category->update($data);
+        $category->save();
 
-        return $user;
+        return $category;
     }
 
     public function delete($id)
     {
-        $this->users->destroy($id);
-        // if ($user == null)
-        //     return true;
-        // $user->delete();
+        $this->categories->destroy($id);
 
         return true;
     }
 
-    public function patchDelete($users)
+    public function patchDelete($categories)
     {
-        foreach ($users as $u) {
-            $this->users->destroy($u["id"]);
+        foreach ($categories as $c) {
+            $this->categories->destroy($c["id"]);
         }
 
         return true;

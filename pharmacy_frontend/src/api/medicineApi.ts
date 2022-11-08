@@ -24,7 +24,7 @@ export const updateMedicineApi = (formData: FormData) => {
   return axiosClient.putForm(`/medicines/${formData.get("id")}`, formData)
 }
 
-export const deleteMedicineApi = (id: number) => {
+export const deleteMedicineApi = (id: number = 0) => {
   return axiosClient.delete(`/medicines/${id}`)
 }
 

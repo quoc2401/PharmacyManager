@@ -32,3 +32,8 @@ export enum MedicineField {
   TRADEMARK = 'trademark',
   FILE = 'image_file'
 }
+
+export enum CategoryField {
+  NAME = 'name',
+  DESCRIPTION = 'description'
+}

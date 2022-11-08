@@ -108,11 +108,29 @@ class MedicineService implements IService
 
   public function delete($id)
   {
-    $this->medicineRepository->delete($id);
+    $medicine = $this->medicineRepository->find($id);
+    
+    if($this->medicineRepository->delete($id)) {
+      try {
+        unlink(public_path().str_replace("http://$_SERVER[HTTP_HOST]", "",$medicine['image']));
+      } catch (\Throwable $th) {
+        Log::error($th->getMessage());
+      }
+    }
   }
 
   public function patchDelete(Request $request)
   {
-    $this->medicineRepository->patchDelete($request->all());
+    $medicines = $request->all();
+
+    if($this->medicineRepository->patchDelete($medicines)) {
+      foreach($medicines as $m) {
+        try {
+          unlink(public_path().str_replace("http://$_SERVER[HTTP_HOST]", "",$m['image']));
+        } catch (\Throwable $th) {
+          Log::error($th->getMessage());
+        }
+      }
+    }
   }
 }

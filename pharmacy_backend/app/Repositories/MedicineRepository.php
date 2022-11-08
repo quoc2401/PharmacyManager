@@ -24,7 +24,6 @@ class MedicineRepository implements IRepository
       $query->where(function($query) use ($params) {
         foreach ($params as $key => $value) {
           if ($key !== 'page' && $key !== 'category_id' && isset($value) && $value !== 'null') {
-            Log::info($key." - ".$value);
             if($key === 'discontinued') {
               $query->where($key, '=', $value);
               continue;
@@ -68,10 +67,7 @@ class MedicineRepository implements IRepository
 
   public function delete($id)
   {
-    $medicines = $this->medicines->find($id);
-    if ($medicines == null)
-      return true;
-    $medicines->delete();
+    $this->medicines->destroy($id);;
 
     return true;
   }
@@ -79,9 +75,9 @@ class MedicineRepository implements IRepository
   public function patchDelete($medicines) {
     DB::transaction(function() use($medicines) {
       foreach($medicines as $m)
-        $this->medicines->delete($m['id']);
+        $this->medicines->destroy($m['id']);
       
-      return true;
     });
+    return true;
   }
 }
