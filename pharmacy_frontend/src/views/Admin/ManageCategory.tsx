@@ -1,8 +1,8 @@
-import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
+import { FC, useState, useEffect, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { Category, User } from '../../shared/types'
+import { Category } from '../../shared/types'
 import { textEditor} from '../../components/Editors'
 import { prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
@@ -231,34 +231,6 @@ const ManageCategory: FC = () => {
     )
   }
 
-  const deleteDialogFooter = (
-    yesAction: MouseEventHandler,
-    noAction: MouseEventHandler
-  ) => {
-    return (
-      <>
-        <Button
-          label="Yes"
-          icon="pi pi-check"
-          className="rounded-md mr-2"
-          onClick={yesAction}
-        />
-        <Button
-          label="No"
-          icon="pi pi-times"
-          className="p-button-danger rounded-md mr-2"
-          onClick={noAction}
-        />
-      </>
-    )
-  }
-
-  const handleInput = (value: string, field: CategoryField) => {
-    const _category = { ...category }
-    _category[field] = value
-    setCategory(_category)
-  }
-
   const renderHeader = () => {
     return (
       <div className="flex justify-between items-center">
@@ -267,8 +239,9 @@ const ManageCategory: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-              placeholder="Keyword Search"
-              onChange={onGlobalFilterChange}
+                className='rounded-md'
+                placeholder="Keyword Search"
+                onChange={onGlobalFilterChange}
             />
           </span>
         </div>

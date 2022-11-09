@@ -32,6 +32,11 @@ const items = [
     icon: 'pi pi-file-edit',
     name: 'Orders',
     path: '/admin/manage/orders'
+  },
+  {
+    icon: 'pi pi-file',
+    name: 'Orders Details',
+    path: '/admin/manage/order-details'
   }
 ]
 

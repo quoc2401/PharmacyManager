@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\OrderDetailResource;
-use App\Http\Resources\OrderResource;
 use App\Repositories\OrderDetailRepository;
-use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 
 class OrderDetailService implements IService
@@ -23,6 +21,9 @@ class OrderDetailService implements IService
     //call repo
     $param = $request->all();
     $orderDetails = $this->orderDetailRepository->get($param);
+    foreach($orderDetails as $d)
+      $d->Medicine;
+
     $orderDetailResources = OrderDetailResource::collection($orderDetails)->response()->getData(true);
 
     return $orderDetailResources;

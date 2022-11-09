@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MedicineController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\OrderDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +61,8 @@ Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 Route::patch('/categories/delete', [CategoryController::class, 'patchDelete']);
 
 //Order api routes
-Route::post('/order', [OrderController::class, 'store']);
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders', [OrderController::class, 'index']);
+
+//Order details api routes
+Route::get('/order-details', [OrderDetailController::class, 'index']);

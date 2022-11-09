@@ -15,10 +15,23 @@ class OrderRepository implements IRepository
 
   public function get($param)
   {
-    $orders = $this->orders->where(function ($query) use ($param) {
+    $orders = $this->orders
+      ->join('users', 'orders.user_id', '=', 'users.id')
+      ->select('orders.*', 'users.first_name', 'users.last_name')
+      ->where(function ($query) use ($param) {
       foreach ($param as $key => $value) {
-        if ($key !== 'page' && !empty($value))
-          $query->orWhere($key, 'LIKE', '%' . $value . '%');
+        if (!empty($value))
+          switch($key){
+            case 'employee_name':
+              $query->orWhereRaw(sprintf("concat(first_name, ' ', last_name) LIKE '%%%s%%'", $value));
+              break;
+            case 'page':
+              continue 2;
+              break;
+            default:
+              $query->orWhere('orders.'.$key, '=', $value);
+              break;
+          }
       }
     })
       ->paginate(env('PAGE_SIZE'));

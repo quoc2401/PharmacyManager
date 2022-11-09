@@ -4,6 +4,8 @@ import Dashboard from '../views/Admin/Dashboard'
 import ManageUser from '../views/Admin/ManageUser'
 import ManageMedicine from '../views/Admin/ManageMedicine'
 import ManageCategory from '../views/Admin/ManageCategory'
+import ManageOrder from '../views/Admin/ManageOrder'
+import ManageOrderDetail from '../views/Admin/ManageOrderDetail'
 
 export const homeRoute = [
   {
@@ -43,10 +45,10 @@ export const adminRoute = [
   },
   {
     path: '/manage/orders',
-    component: ManageUser
+    component: ManageOrder
   },
   {
     path: '/manage/order-details',
-    component: ManageUser
+    component: ManageOrderDetail
   }
 ]

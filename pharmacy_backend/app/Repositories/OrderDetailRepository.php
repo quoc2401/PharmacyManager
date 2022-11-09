@@ -15,10 +15,22 @@ class OrderDetailRepository implements IRepository
 
   public function get($param)
   {
-    $orderDetails = $this->orderDetails->where(function ($query) use ($param) {
+    $orderDetails = $this->orderDetails
+      ->join('medicines', 'order_details.medicine_id', '=', 'medicines.id')
+      ->select('order_details.*')
+      ->where(function ($query) use ($param) {
       foreach ($param as $key => $value) {
-        if ($key !== 'page' && !empty($value))
-          $query->orWhere($key, 'LIKE', '%' . $value . '%');
+        if(!empty($value) && $value !== 'null')
+          switch($key) {
+            case 'medicine_name':
+              $query->orWhere('medicines.name', 'LIKE', '%'.$value.'%');
+              break;
+            case 'page':
+              continue 2;
+              break;
+            default:
+              $query->orWhere($key, '=', $value);
+          }
       }
     })
       ->paginate(env('PAGE_SIZE'));
