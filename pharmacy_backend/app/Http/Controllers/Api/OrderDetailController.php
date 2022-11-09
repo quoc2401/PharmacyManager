@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 
 class OrderDetailController extends Controller
 {
-    public function __construct(OrderDetailService $OrderDetailService)
+    private $orderDetailService;
+
+    public function __construct(OrderDetailService $orderDetailService)
     {
-        $this->OrderDetailService = $OrderDetailService;
+        $this->orderDetailService = $orderDetailService;
         $this->middleware('auth.role:ADMIN', ['only' => ['destroy', 'update']]);
         $this->middleware('auth.role:EMPLOYEE,ADMIN', ['only' => ['index', 'show', 'store']]);
     }
@@ -22,7 +24,7 @@ class OrderDetailController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = $this->medicineService->get($request);
+        $orders = $this->orderDetailService->get($request);
 
         return $this->QuerySuccessResponse($orders);
     }

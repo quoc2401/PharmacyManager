@@ -369,8 +369,9 @@ const ManageMedicine: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-              placeholder="Keyword Search"
-              onChange={onGlobalFilterChange}
+                className='rounded-md'
+                placeholder="Keyword Search"
+                onChange={onGlobalFilterChange}
             />
           </span>
         </div>

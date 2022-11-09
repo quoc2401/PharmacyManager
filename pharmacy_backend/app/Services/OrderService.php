@@ -14,7 +14,6 @@ class OrderService implements IService
 
   private $orderRepository;
   private $orderDetailRepository;
-  private $auth;
 
   public function __construct(OrderRepository $orderRepository, OrderDetailRepository $orderDetailRepository)
   {
@@ -27,6 +26,7 @@ class OrderService implements IService
     //call repo
     $param = $request->all();
     $orders = $this->orderRepository->get($param);
+
     $orderResources = OrderResource::collection($orders)->response()->getData(true);
 
     return $orderResources;

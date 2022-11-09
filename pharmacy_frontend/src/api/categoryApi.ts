@@ -9,7 +9,6 @@ export const getCategoriesApi = (page: number | null, params: any | null) => {
         )
         .join('&')
     : ''
-    console.log(queryParams)
   return axiosClient.get(`/categories?page=${page}&${queryParams}`)
 }
 

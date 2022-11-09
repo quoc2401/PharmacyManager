@@ -37,3 +37,13 @@ export enum CategoryField {
   NAME = 'name',
   DESCRIPTION = 'description'
 }
+
+export enum OrderField {
+  EMPLOYEE = 'employee_name',
+  ORDER_DATE = 'order_date'
+}
+
+export enum OrderDetailField {
+  ORDER = 'order_id',
+  MEDICINE = 'medicine_name'
+}
