@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
+import { FC, useState, useEffect, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -18,7 +18,7 @@ import {
   textAreaEditor,
   categorySelector
 } from '../../components/Editors'
-import { isBool, prependArray } from '../../shared/utils'
+import { prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
 import { MedicineField } from '../../shared/constant'
 import { Toolbar } from 'primereact/toolbar'
@@ -70,7 +70,7 @@ const ManageMedicine: FC = () => {
     uses: { value: '', matchMode: FilterMatchMode.CONTAINS },
     trademark: { value: '', matchMode: FilterMatchMode.CONTAINS },
     category_id: { value: '', matchMode: FilterMatchMode.EQUALS },
-    discontinued: { value: null, matchMode: FilterMatchMode.EQUALS}
+    discontinued: { value: null, matchMode: FilterMatchMode.EQUALS }
   })
 
   const tempUrl = useRef<string>()
@@ -126,7 +126,7 @@ const ManageMedicine: FC = () => {
     onSubmit: async value => {
       setLoading(true)
       try {
-        console.log("asas")
+        console.log('asas')
         const formData = new FormData()
         Object.keys(value).map(k => {
           formData.append(k, value[k])
@@ -177,26 +177,28 @@ const ManageMedicine: FC = () => {
   }
 
   //delete
-    const deleteSelectedMedicines = async () => {
-      setLoading(true)
-      try {
-        console.log(selectedMedicines)
-        if (selectedMedicines.length == 1) await deleteMedicineApi(selectedMedicines[0].id)
-        else await patchDeleteMedicineApi(selectedMedicines)
+  const deleteSelectedMedicines = async () => {
+    setLoading(true)
+    try {
+      console.log(selectedMedicines)
+      if (selectedMedicines.length == 1)
+        await deleteMedicineApi(selectedMedicines[0].id)
+      else await patchDeleteMedicineApi(selectedMedicines)
 
-        const _medicines = medicines.filter(val => !selectedMedicines.includes(val))
+      const _medicines = medicines.filter(
+        val => !selectedMedicines.includes(val)
+      )
 
-        setSelectedMedicines([])
-        setMedicines(_medicines)
-        setDeleteDialog(false)
-        toast.success('delete success')
-      } catch (error) {
-        console.log(error)
-        toast.error('delete failed')
-      }
-      setLoading(false)
+      setSelectedMedicines([])
+      setMedicines(_medicines)
+      setDeleteDialog(false)
+      toast.success('delete success')
+    } catch (error) {
+      console.log(error)
+      toast.error('delete failed')
     }
-
+    setLoading(false)
+  }
 
   //filters
   const onGlobalFilterChange = (e: any) => {
@@ -246,19 +248,21 @@ const ManageMedicine: FC = () => {
     return (
       <TriStateCheckbox
         value={
-          filters.discontinued.value !== null ? Boolean(filters.discontinued.value) : null
+          filters.discontinued.value !== null
+            ? Boolean(filters.discontinued.value)
+            : null
         }
         placeholder="Search by category"
         className="rounded-md"
         onChange={e => {
           setFilters(prev => {
-            const _filters = {...prev}
+            const _filters = { ...prev }
             const value = e.value
-            _filters['discontinued'].value = (value === null || value === undefined) ? null : +value as any
+            _filters['discontinued'].value =
+              value === null || value === undefined ? null : (+value as any)
             return _filters
           })
         }}
-        
       />
     )
   }
@@ -269,9 +273,8 @@ const ManageMedicine: FC = () => {
 
   const onCellEditComplete = (e: any) => {
     const { rowData, newValue, field, originalEvent: event } = e
-    if(rowData[field] == newValue)
-      return
-      
+    if (rowData[field] == newValue) return
+
     switch (field) {
       case 'category_id':
         rowData[field] = newValue
@@ -369,9 +372,9 @@ const ManageMedicine: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-                className='rounded-md'
-                placeholder="Keyword Search"
-                onChange={onGlobalFilterChange}
+              className="rounded-md"
+              placeholder="Keyword Search"
+              onChange={onGlobalFilterChange}
             />
           </span>
         </div>
@@ -444,9 +447,7 @@ const ManageMedicine: FC = () => {
             onCellEditComplete={onCellEditComplete}
             filter
             showFilterMenu={false}
-            filterElement={customCategoryFilter(
-                MedicineField.CATEGORY
-            )}
+            filterElement={customCategoryFilter(MedicineField.CATEGORY)}
             onFilterClear={() => clearFilter(MedicineField.CATEGORY)}
           />
           <Column
@@ -523,7 +524,7 @@ const ManageMedicine: FC = () => {
           />
         </DataTable>
       </div>
-      
+
       <Dialog
         visible={newDialog}
         header="New Medicine"
@@ -536,9 +537,7 @@ const ManageMedicine: FC = () => {
           <div className="field mb-5">
             <label htmlFor="name">Name</label>
             {formik.errors.name && (
-              <p className="text-xs text-red-500 ml-1">
-                {formik.errors.name}
-              </p>
+              <p className="text-xs text-red-500 ml-1">{formik.errors.name}</p>
             )}
             <InputText
               id="name"

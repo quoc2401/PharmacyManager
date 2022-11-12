@@ -3,7 +3,7 @@ import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Category } from '../../shared/types'
-import { textEditor} from '../../components/Editors'
+import { textEditor } from '../../components/Editors'
 import { prependArray } from '../../shared/utils'
 import { InputText } from 'primereact/inputtext'
 import { CategoryField } from '../../shared/constant'
@@ -13,7 +13,13 @@ import { toast } from 'react-toastify'
 import { Button } from 'primereact/button'
 import { FilterMatchMode } from 'primereact/api'
 import { newDialogFooter, deleteDialogFooter } from '../../shared/DialogFooters'
-import { createCategoryApi, deleteCategoriesApi, deleteCategoryApi, getCategoriesApi, updateCategoryApi } from '../../api/categoryApi'
+import {
+  createCategoryApi,
+  deleteCategoriesApi,
+  deleteCategoryApi,
+  getCategoriesApi,
+  updateCategoryApi
+} from '../../api/categoryApi'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
@@ -55,16 +61,16 @@ const ManageCategory: FC = () => {
   // functions
   const loadCategories = async () => {
     setLoading(true)
-      try {
-        const res = await getCategoriesApi(lazyParams.page + 1, filters)
+    try {
+      const res = await getCategoriesApi(lazyParams.page + 1, filters)
 
-        setCategories(res.data.data)
-        setTotalRecords(res.data.meta.total)
-      } catch (e) {
-        console.log(e)
-      }
+      setCategories(res.data.data)
+      setTotalRecords(res.data.meta.total)
+    } catch (e) {
+      console.log(e)
+    }
 
-      setLoading(false)
+    setLoading(false)
   }
   const formik = useFormik<Category>({
     initialValues: {
@@ -75,14 +81,14 @@ const ManageCategory: FC = () => {
       name: Yup.string().required(),
       description: Yup.string().required()
     }),
-    onSubmit: async (value) => {
+    onSubmit: async value => {
       setLoading(true)
       try {
         const res = await createCategoryApi(value)
         const data = res.data.data
 
-        if(res.status === 200) {
-          toast.success("create success")
+        if (res.status === 200) {
+          toast.success('create success')
           setCategories(prev => {
             prev = prependArray(data, prev)
             return prev
@@ -91,7 +97,7 @@ const ManageCategory: FC = () => {
           setNewDialog(false)
         }
       } catch (error) {
-        toast.error("failed to create")
+        toast.error('failed to create')
         console.log(error)
       }
       setLoading(false)
@@ -105,19 +111,18 @@ const ManageCategory: FC = () => {
     const { newData, index } = e
 
     _categories[index] = newData
-    
+
     setCategories(_categories)
     try {
       const res = await updateCategoryApi(newData)
 
       console.log(res)
 
-      if (res.status == 200)
-        toast.success("update success")
+      if (res.status == 200) toast.success('update success')
     } catch (error) {
       console.log(error)
       setCategories(categories)
-      toast.error("failed to update")
+      toast.error('failed to update')
     }
     setLoading(false)
   }
@@ -126,10 +131,13 @@ const ManageCategory: FC = () => {
   const deleteSelectedCategories = async () => {
     setLoading(true)
     try {
-      if (selectedCategories.length == 1) await deleteCategoryApi(selectedCategories[0].id)
+      if (selectedCategories.length == 1)
+        await deleteCategoryApi(selectedCategories[0].id)
       else await deleteCategoriesApi(selectedCategories)
 
-      const _categories = categories.filter(val => !selectedCategories.includes(val))
+      const _categories = categories.filter(
+        val => !selectedCategories.includes(val)
+      )
 
       setSelectedCategories([])
       setCategories(_categories)
@@ -148,7 +156,6 @@ const ManageCategory: FC = () => {
 
     filters.name.value = value
     filters.description.value = value
-    
 
     setFilters(_filters)
     setGlobalFilterValue(value)
@@ -239,9 +246,9 @@ const ManageCategory: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-                className='rounded-md'
-                placeholder="Keyword Search"
-                onChange={onGlobalFilterChange}
+              className="rounded-md"
+              placeholder="Keyword Search"
+              onChange={onGlobalFilterChange}
             />
           </span>
         </div>

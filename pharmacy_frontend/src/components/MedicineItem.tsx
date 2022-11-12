@@ -19,7 +19,7 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
 
   const handleAddCart = () => {
     const medicineLocal = getMedicineByIdLocal(item)
-    
+
     if (medicineLocal && medicineLocal.quantity >= item.unit_in_stock) {
       toast.error('Đã đạt số lượng tối đa. Không còn hàng')
     } else {
