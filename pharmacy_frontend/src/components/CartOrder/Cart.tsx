@@ -13,6 +13,7 @@ import {
   deleteMedicineLocal
 } from '../../shared/localStorage'
 import { useStore } from '../../store'
+import { Link } from 'react-router-dom'
 
 interface CartProps {
   isOpened: boolean
@@ -40,12 +41,12 @@ const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
   const handleCreateOrder = async () => {
     try {
       const res = await createOrderApi({
-        order_details: {...cart},
+        order_details: { ...cart },
         user_id: currentUser?.id
       })
-      if(res.status === 200) {
-        
+      if (res.status === 200) {
         setCart([])
+        removeCartStorage()
         toast.success(res.data.message, { theme: 'colored' })
       }
     } catch (error) {
@@ -106,11 +107,13 @@ const Cart: FC<CartProps> = ({ isOpened, setIsOpened }) => {
                 onClick={handleDeleteAll}
               />
               <div>
-                <Button
-                  disabled={cart.length <= 0}
-                  label="See details"
-                  className="p-button-success p-button-text ml-1"
-                />
+                <Link to={'/order-cart'}>
+                  <Button
+                    disabled={cart.length <= 0}
+                    label="See details"
+                    className="p-button-success p-button-text ml-1"
+                  />
+                </Link>
                 <Button
                   disabled={cart.length <= 0}
                   label="Sale"

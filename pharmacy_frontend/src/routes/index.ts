@@ -6,6 +6,7 @@ import ManageMedicine from '../views/Admin/ManageMedicine'
 import ManageCategory from '../views/Admin/ManageCategory'
 import ManageOrder from '../views/Admin/ManageOrder'
 import ManageOrderDetail from '../views/Admin/ManageOrderDetail'
+import OrderCart from '../views/Home/OrderCart'
 
 export const homeRoute = [
   {
@@ -18,7 +19,7 @@ export const homeRoute = [
   },
   {
     path: '/order-cart',
-    component: MedicineDetail
+    component: OrderCart
   },
   {
     path: '/order-details/:id',

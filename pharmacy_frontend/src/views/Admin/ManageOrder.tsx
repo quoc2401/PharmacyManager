@@ -35,16 +35,16 @@ const ManageOrder: FC = () => {
   // functions
   const loadCategories = async () => {
     setLoading(true)
-      try {
-        const res = await getOrdersApi(lazyParams.page + 1, filters)
+    try {
+      const res = await getOrdersApi(lazyParams.page + 1, filters)
 
-        setOrders(res.data.data)
-        setTotalRecords(res.data.meta.total)
-      } catch (e) {
-        console.log(e)
-      }
+      setOrders(res.data.data)
+      setTotalRecords(res.data.meta.total)
+    } catch (e) {
+      console.log(e)
+    }
 
-      setLoading(false)
+    setLoading(false)
   }
 
   const onGlobalFilterChange = (e: any) => {
@@ -52,7 +52,6 @@ const ManageOrder: FC = () => {
     const _filters = { ...filters }
 
     filters.employee_name.value = value
-    
 
     setFilters(_filters)
     setGlobalFilterValue(value)
@@ -86,7 +85,7 @@ const ManageOrder: FC = () => {
   }
 
   const userFullnameBodyTemplate = (rowData: any) => {
-    return rowData.first_name + " " + rowData.last_name
+    return rowData.first_name + ' ' + rowData.last_name
   }
 
   const clearFilter = (field: OrderField) => {
@@ -106,9 +105,9 @@ const ManageOrder: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-                className='rounded-md'
-                placeholder="Keyword Search"
-                onChange={onGlobalFilterChange}
+              className="rounded-md"
+              placeholder="Keyword Search"
+              onChange={onGlobalFilterChange}
             />
           </span>
         </div>
@@ -149,7 +148,7 @@ const ManageOrder: FC = () => {
             filter
             showFilterMenu={false}
             filterElement={customFilter(
-                OrderField.EMPLOYEE,
+              OrderField.EMPLOYEE,
               "Search by Employee's name..."
             )}
             onFilterClear={() => clearFilter(OrderField.EMPLOYEE)}

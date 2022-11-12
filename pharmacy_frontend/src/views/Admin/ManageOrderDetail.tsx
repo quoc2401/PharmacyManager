@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
+import { FC, useState, useEffect, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -36,16 +36,16 @@ const ManageOrderDetail: FC = () => {
   // functions
   const loadCategories = async () => {
     setLoading(true)
-      try {
-        const res = await getOrderDetailsApi(lazyParams.page + 1, filters)
+    try {
+      const res = await getOrderDetailsApi(lazyParams.page + 1, filters)
 
-        setOrderDetails(res.data.data)
-        setTotalRecords(res.data.meta.total)
-      } catch (e) {
-        console.log(e)
-      }
+      setOrderDetails(res.data.data)
+      setTotalRecords(res.data.meta.total)
+    } catch (e) {
+      console.log(e)
+    }
 
-      setLoading(false)
+    setLoading(false)
   }
 
   const onGlobalFilterChange = (e: any) => {
@@ -53,7 +53,6 @@ const ManageOrderDetail: FC = () => {
     const _filters = { ...filters }
 
     filters.medicine_name.value = value
-    
 
     setFilters(_filters)
     setGlobalFilterValue(value)
@@ -108,9 +107,9 @@ const ManageOrderDetail: FC = () => {
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
-                className='rounded-md'
-                placeholder="Keyword Search"
-                onChange={onGlobalFilterChange}
+              className="rounded-md"
+              placeholder="Keyword Search"
+              onChange={onGlobalFilterChange}
             />
           </span>
         </div>
@@ -143,15 +142,15 @@ const ManageOrderDetail: FC = () => {
           filters={filters}
         >
           <Column field="id" header="Id" className="min-w-[3rem]" />
-          <Column 
-            field="order_id" 
-            header="Order Id" 
-            className="min-w-[3rem]" 
+          <Column
+            field="order_id"
+            header="Order Id"
+            className="min-w-[3rem]"
             filter
             showFilterMenu={false}
             filterElement={customFilter(
-                OrderDetailField.ORDER,
-              "Search by order id..."
+              OrderDetailField.ORDER,
+              'Search by order id...'
             )}
             onFilterClear={() => clearFilter(OrderDetailField.ORDER)}
           />
@@ -163,7 +162,7 @@ const ManageOrderDetail: FC = () => {
             filter
             showFilterMenu={false}
             filterElement={customFilter(
-                OrderDetailField.MEDICINE,
+              OrderDetailField.MEDICINE,
               "Search by medicine's name..."
             )}
             onFilterClear={() => clearFilter(OrderDetailField.MEDICINE)}
@@ -173,16 +172,8 @@ const ManageOrderDetail: FC = () => {
             header="Unit Price"
             className="min-w-[8rem]"
           />
-          <Column
-            field="quantity"
-            header="Quantity"
-            className="min-w-[6rem]"
-          />
-          <Column
-            field="discount"
-            header="Discount"
-            className="min-w-[8rem]"
-          />
+          <Column field="quantity" header="Quantity" className="min-w-[6rem]" />
+          <Column field="discount" header="Discount" className="min-w-[8rem]" />
           <Column
             rowEditor
             className="min-w-[6rem] w-[8%]"

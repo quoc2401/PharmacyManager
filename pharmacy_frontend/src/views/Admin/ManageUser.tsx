@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, MouseEventHandler, useRef } from 'react'
+import { FC, useState, useEffect, useRef } from 'react'
 import { useTitle } from '../../hooks/useTitle'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'

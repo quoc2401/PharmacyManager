@@ -1,14 +1,13 @@
 import { Calendar } from 'primereact/calendar'
 import { InputText } from 'primereact/inputtext'
 import { Dropdown } from 'primereact/dropdown'
-import { roles} from '../shared/constant'
+import { roles } from '../shared/constant'
 import { Checkbox } from 'primereact/checkbox'
 import { FileUpload } from 'primereact/fileupload'
 import { InputTextarea } from 'primereact/inputtextarea'
-import { getCategoriesApi } from '../api/categoryApi'
 import { Category } from '../shared/types'
 
-export const textEditor = (options:any, type:string = "text", step:number = 1) => {
+export const textEditor = (options: any, type = 'text', step = 1) => {
   return (
     <InputText
       type={type}
@@ -44,7 +43,6 @@ export const roleSelector = (options: any) => {
   )
 }
 
-
 export const categorySelector = (options: any, categories: Category[]) => {
   return (
     <Dropdown
@@ -71,26 +69,28 @@ export const checkBoxEditor = (options: any) => {
 
 export const textAreaEditor = (options: any) => {
   return (
-    <InputTextarea value={options.value} 
+    <InputTextarea
+      value={options.value}
       onChange={e => options.editorCallback(e.target.value)}
-      className="min-w-[24rem]"  
+      className="min-w-[24rem]"
     />
   )
 }
 
 export const imageSelector = (options: any) => {
   // const url = URL.createObjectURL()
-  return (<div className='flex space-x-2 w-48'>
-    <img src={options.value} alt="image" className='max-w-[4rem]'/>
-    <FileUpload
-      id="image_file"
-      name="image_file"
-      onSelect={e => options.editorCallback(e.files[0])}
-      mode="basic"
-      accept="image/*"
-      maxFileSize={1000000}
-      className="rounded-md w-2"
-    />
-  </div>
+  return (
+    <div className="flex space-x-2 w-48">
+      <img src={options.value} alt="image" className="max-w-[4rem]" />
+      <FileUpload
+        id="image_file"
+        name="image_file"
+        onSelect={e => options.editorCallback(e.files[0])}
+        mode="basic"
+        accept="image/*"
+        maxFileSize={1000000}
+        className="rounded-md w-2"
+      />
+    </div>
   )
 }
