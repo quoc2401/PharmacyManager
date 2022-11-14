@@ -15,6 +15,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ setOpenedSideBar, openedSideBar }) => {
   const currentUser = useStore(state => state.currentUser)
+  const lastCount = useStore(state => state.lastCount)
   const logout = useStore(state => state.logout)
   const [isOpenedOrder, setIsOpenedOrder] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -65,6 +66,7 @@ const Header: FC<HeaderProps> = ({ setOpenedSideBar, openedSideBar }) => {
     try {
       await logoutApi()
       logout()
+      localStorage.setItem('last-count', '' + lastCount)
       setLoading(false)
     } catch (error) {
       setLoading(false)

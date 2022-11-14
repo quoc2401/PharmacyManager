@@ -31,3 +31,11 @@ export const deleteMedicineApi = (id: number = 0) => {
 export const patchDeleteMedicineApi = (medicines: Medicine[]) => {
   return axiosClient.patch(`/medicines/delete`, medicines)
 }
+
+export const stockCountApi = (lastCount: string|null) => {
+  return axiosClient.get(`/medicines/stock-count?last_count=${lastCount}`)
+}
+
+export const getRecentSaleMedicineApi = () => {
+  return axiosClient.get(`/medicines/recent-sale`)
+}

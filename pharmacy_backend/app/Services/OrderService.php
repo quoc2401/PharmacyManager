@@ -82,4 +82,13 @@ class OrderService implements IService
     //call repo
     $this->orderRepository->delete($id);
   }
+
+  public function count(Request $request) {
+    $res = [
+      'total' => $this->orderRepository->count($request->get('timestamp')),
+      'new' => $this->orderRepository->count($request->get('last_visit'))
+    ];
+
+    return $res;
+  }
 }

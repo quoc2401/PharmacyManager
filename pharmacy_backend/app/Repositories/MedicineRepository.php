@@ -80,4 +80,23 @@ class MedicineRepository implements IRepository
     });
     return true;
   }
+
+  public function stockCount($lastCount=0) {
+    $count = $this->medicines->all()->sum('unit_in_stock');
+    $count -= $lastCount;
+
+    return $count;
+  }
+
+  public function recentSale($size=10) {
+    $medicines = $this->medicines
+                      ->join('order_details', 'medicines.id', '=', 'order_details.medicine_id')
+                      ->join('orders', 'order_details.order_id', '=', 'orders.id')
+                      ->select('medicines.*')
+                      ->orderBy('order_date', 'desc')
+                      ->take($size)->get();
+                      // ->paginate($)
+    Log::info('count: '.count($medicines));
+    return $medicines;
+  }
 }

@@ -126,11 +126,24 @@ class MedicineService implements IService
     if($this->medicineRepository->patchDelete($medicines)) {
       foreach($medicines as $m) {
         try {
-          unlink(public_path().str_replace("http://$_SERVER[HTTP_HOST]", "",$m['image']));
+          unlink(public_path().str_replace("http://$_SERVER[HTTP_HOST]", "", $m['image']));
         } catch (\Throwable $th) {
           Log::error($th->getMessage());
         }
       }
     }
+  }
+
+  public function stockCount(Request $request) {
+    $res = [
+      'total' => $this->medicineRepository->stockCount(),
+      'new' => $this->medicineRepository->stockCount($request->get('last_count'))
+    ];
+
+    return $res;
+  }
+
+  public function recentSale() {
+    return $this->medicineRepository->recentSale();
   }
 }

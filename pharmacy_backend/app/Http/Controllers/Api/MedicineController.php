@@ -50,7 +50,7 @@ class MedicineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         $medicine = $this->medicineService->find($id);
 
@@ -77,7 +77,7 @@ class MedicineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $this->medicineService->delete($id);
 
@@ -88,5 +88,17 @@ class MedicineController extends Controller
         $this->medicineService->patchDelete($request);
 
         return $this->UpdateSuccessResponse("");
+    }
+
+    public function stockCount(Request $request) {
+        $data = $this->medicineService->stockCount($request);
+
+        return $this->QuerySuccessResponse($data);
+    }
+
+    public function recentSale() {
+        $data = $this->medicineService->recentSale();
+
+        return $this->QuerySuccessResponse($data);
     }
 }

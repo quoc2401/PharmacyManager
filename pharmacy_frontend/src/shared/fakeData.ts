@@ -2,26 +2,30 @@ export const statistics = [
   {
     name: 'Orders',
     icon: 'pi pi-shopping-cart text-blue-500',
-    number: 152,
-    color: 'bg-blue-100'
+    total: 152,
+    color: 'bg-blue-100',
+    new: 0
   },
   {
     name: 'Revenue',
     icon: 'pi pi-map-marker text-orange-500',
-    number: '$5800',
-    color: 'bg-orange-100'
+    total: '$5800',
+    color: 'bg-orange-100',
+    new: 0
   },
   {
     name: 'Customers',
     icon: 'pi pi-inbox text-cyan-500',
-    number: '25508',
-    color: 'bg-cyan-100'
+    total: '25508',
+    color: 'bg-cyan-100',
+    new: 0
   },
   {
     name: 'Medicines',
     icon: 'pi pi-star text-purple-500',
-    number: '2000',
-    color: 'bg-purple-100'
+    total: '2000',
+    color: 'bg-purple-100',
+    new: 0
   }
 ]
 
@@ -133,16 +137,16 @@ export const chartOptions2 = {
       }
     },
     y1: {
-      type: 'linear',
-      display: true,
-      position: 'right',
-      ticks: {
-        color: '#495057'
-      },
-      grid: {
-        drawOnChartArea: false,
-        color: '#ebedef'
-      }
+        type: 'linear',
+        display: true,
+        position: 'right',
+        ticks: {
+            color: '#495057'
+        },
+        grid: {
+            drawOnChartArea: false,
+            color: '#ebedef'
+        }
     }
   }
 }
