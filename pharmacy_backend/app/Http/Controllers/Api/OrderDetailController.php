@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StatisticRequest;
 use App\Services\OrderDetailService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderDetailController extends Controller
 {
@@ -76,5 +78,35 @@ class OrderDetailController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    //get revenue since a timestamp
+    public function revenue(StatisticRequest $request) {
+
+        $data = $this->orderDetailService->revenue($request);
+
+        return $this->QuerySuccessResponse($data);
+    }
+
+    //get count medicine sold since a timestamp
+    public function countSale(StatisticRequest $request) {
+
+        $data = $this->orderDetailService->countSale($request);
+
+        return $this->QuerySuccessResponse($data);
+    }
+
+    //get revenue every month of a year
+    public function revenueMonthly($year) {
+        $data = $this->orderDetailService->revenueMonthly($year);
+
+        return $this->QuerySuccessResponse($data);
+    }
+
+    //get count medicine sold every month of a year
+    public function countSaleMonthly($year) {
+        $data = $this->orderDetailService->countSaleMonthly($year);
+
+        return $this->QuerySuccessResponse($data);
     }
 }

@@ -15,3 +15,7 @@ export const getOrdersApi = (page: number, params: any) => {
     : ''
   return axiosClient.get(`/orders?page=${page}&${queryParams}`)
 }
+
+export const countOrderApi = (timestamp:string|Date|null, last_visit:string|Date|null) => {
+  return axiosClient.get(`/orders/count?timestamp=${timestamp}&last_visit=${last_visit}`)
+}

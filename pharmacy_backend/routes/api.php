@@ -47,11 +47,13 @@ Route::group([
 
 //Medicine api routes
 Route::get('/medicines', [MedicineController::class, 'index']);
-Route::get('/medicines/{id}', [MedicineController::class, 'show']);
+Route::get('/medicines/{id}', [MedicineController::class, 'show'])->where('id', '[0-9]+');
 Route::post('/medicines', [MedicineController::class, 'store']);
 Route::put('/medicines/{id}', [MedicineController::class, 'update']);
 Route::delete('/medicines/{id}', [MedicineController::class, 'destroy']);
 Route::patch('/medicines/delete', [MedicineController::class, 'patchDelete']);
+Route::get('/medicines/stock-count', [MedicineController::class, 'stockCount']);
+Route::get('/medicines/recent-sale', [MedicineController::class, 'recentSale']);
 
 //Category api routes
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -63,6 +65,13 @@ Route::patch('/categories/delete', [CategoryController::class, 'patchDelete']);
 //Order api routes
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders', [OrderController::class, 'index']);
+Route::get('/orders/count',[OrderController::class, 'count']);
 
 //Order details api routes
 Route::get('/order-details', [OrderDetailController::class, 'index']);
+Route::get('/order-details/revenue', [OrderDetailController::class, 'revenue']);
+Route::get('/order-details/revenue-monthly/{year}', [OrderDetailController::class, 'revenueMonthly'])
+    ->where('year', '[0-9]+');
+Route::get('/order-details/count-sale', [OrderDetailController::class, 'countSale']);
+Route::get('/order-details/count-sale-monthly/{year}', [OrderDetailController::class, 'countSaleMonthly'])
+    ->where('year', '[0-9]+');

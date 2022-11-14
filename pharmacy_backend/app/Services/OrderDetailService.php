@@ -61,4 +61,35 @@ class OrderDetailService implements IService
     //call repo
     $this->orderDetailRepository->delete($id);
   }
+
+  public function revenue(Request $request) {
+    
+    $res = [
+      'total' => $this->orderDetailRepository->revenue($request->get('timestamp')),
+      'new' => $this->orderDetailRepository->revenue($request->get('last_visit'))
+    ];
+
+    return $res;
+  }
+
+  public function countSale(Request $request) {
+    $res = [
+      'total' => $this->orderDetailRepository->countSale($request->get('timestamp')),
+      'new' => $this->orderDetailRepository->countSale($request->get('last_visit'))
+    ];
+
+    return $res;
+  }
+
+  public function revenueMonthly($year) {
+    $res = $this->orderDetailRepository->revenueMonthly($year);
+
+    return $res;
+  }
+
+  public function countSaleMonthly($year) {
+    $res = $this->orderDetailRepository->countSaleMonthly($year);
+
+    return $res;
+  }
 }

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StatisticRequest;
 use App\Services\OrderDetailService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -79,5 +81,11 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function count(StatisticRequest $request) {
+
+        $res = $this->orderService->count($request);
+        return $this->QuerySuccessResponse($res);
     }
 }

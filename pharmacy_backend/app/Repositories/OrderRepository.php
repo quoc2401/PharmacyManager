@@ -70,4 +70,13 @@ class OrderRepository implements IRepository
 
     return true;
   }
+
+  public function count($timestamp=null) {
+    $count = $this->orders->where(function($query) use($timestamp) {
+      if ($timestamp)
+        $query->where('order_date', '>=', $timestamp);
+    })->count();
+
+    return $count;
+  }
 }
