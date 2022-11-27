@@ -258,7 +258,7 @@ const ManageMedicine: FC = () => {
           setFilters(prev => {
             const _filters = { ...prev }
             const value = e.value
-            _filters['discontinued'].value =
+            _filters[field].value =
               value === null || value === undefined ? null : (+value as any)
             return _filters
           })
@@ -310,7 +310,7 @@ const ManageMedicine: FC = () => {
   const customFilter = (field: MedicineField, placeholder: string) => {
     return (
       <InputText
-        value={filters['name'].value}
+        value={filters[field].value}
         placeholder={placeholder}
         onChange={e => handleFilter(field, e.target.value)}
         className="rounded-md"

@@ -21,10 +21,10 @@ export const createMedicineApi = (medicine: FormData) => {
 }
 
 export const updateMedicineApi = (formData: FormData) => {
-  return axiosClient.putForm(`/medicines/${formData.get("id")}`, formData)
+  return axiosClient.putForm(`/medicines/${formData.get('id')}`, formData)
 }
 
-export const deleteMedicineApi = (id: number = 0) => {
+export const deleteMedicineApi = (id: number) => {
   return axiosClient.delete(`/medicines/${id}`)
 }
 
@@ -32,7 +32,7 @@ export const patchDeleteMedicineApi = (medicines: Medicine[]) => {
   return axiosClient.patch(`/medicines/delete`, medicines)
 }
 
-export const stockCountApi = (lastCount: string|null) => {
+export const stockCountApi = (lastCount: string | null) => {
   return axiosClient.get(`/medicines/stock-count?last_count=${lastCount}`)
 }
 

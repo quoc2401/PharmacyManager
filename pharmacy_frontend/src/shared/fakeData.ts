@@ -137,16 +137,16 @@ export const chartOptions2 = {
       }
     },
     y1: {
-        type: 'linear',
-        display: true,
-        position: 'right',
-        ticks: {
-            color: '#495057'
-        },
-        grid: {
-            drawOnChartArea: false,
-            color: '#ebedef'
-        }
+      type: 'linear',
+      display: true,
+      position: 'right',
+      ticks: {
+        color: '#495057'
+      },
+      grid: {
+        drawOnChartArea: false,
+        color: '#ebedef'
+      }
     }
   }
 }

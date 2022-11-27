@@ -36,7 +36,9 @@ export const birthDateBodyTemplate = (rowData: any) => {
 }
 
 export const imageBodyTemplate = (rowData: any) => {
-  return <img src={rowData.image} alt={rowData.name} className="max-w-[4rem]"></img>
+  return (
+    <img src={rowData.image} alt={rowData.name} className="max-w-[4rem]"></img>
+  )
 }
 
 export const discontinuedBodyTemplate = (rowData: any) => {
