@@ -34,7 +34,7 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
 
   return (
     <div className="flex flex-col bg-slate-100 rounded-md overflow-hidden border overflow-hidden shadow-md">
-      <div className="hover:brightness-90 transition-all transition-duration-200 relative min-h-[62%] flex items-center">
+      <div className="hover:brightness-90 transition-all transition-duration-200 relative grow flex items-center p-1">
         <Link to={`/medicine-details/${convertParam(item.name)}/${item.id}`}>
           <ImgFade className="w-full object-cover" lazy_src={item.image} />
         </Link>
@@ -58,7 +58,7 @@ const MedicineItem: FC<MedicineItemProps> = ({ item }) => {
           {formatCurrency(item.unit_price)}
         </div>
         <div className="text-slate-500 mt-2 text-sm">
-          Số lượng: {item.unit_in_stock}
+          Quantity: {item.unit_in_stock}
         </div>
         <div className="flex items-end justify-between">
           <InputNumber
